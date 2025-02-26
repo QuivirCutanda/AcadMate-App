@@ -1,4 +1,4 @@
-package com.dave23.AcadMate
+package com.AcadMate.app
 
 import android.app.Application
 import android.content.res.Configuration

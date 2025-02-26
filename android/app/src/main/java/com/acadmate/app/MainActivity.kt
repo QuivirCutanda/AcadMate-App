@@ -1,4 +1,4 @@
-package com.dave23.AcadMate
+package com.AcadMate.app
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
