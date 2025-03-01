@@ -14,16 +14,16 @@ const DashBoard = () => {
   const { scrollHandler } = useScroll();
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#f3f3f3",  }}>
+    <View style={{ flex: 1, backgroundColor: "#f3f3f3",  padding: 16 }}>
       <Animated.FlatList
         data={dummyData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View
             style={{
-              backgroundColor: "white",
+              backgroundColor: "green",
               padding: 16,
-              // marginBottom: 12,
+              marginBottom: 12,
               borderRadius: 12,
             }}
           >
