@@ -34,10 +34,10 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   const animatedTabBarStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: withSpring(tabBarVisibility.value === 1 ? 0 : 100, { duration: 800 }),
+        translateY: withSpring(tabBarVisibility.value === 1 ? 0 : 100, { duration: 300 }),
       },
     ],
-    opacity: withSpring(tabBarVisibility.value, { duration: 800 }),
+    opacity: withSpring(tabBarVisibility.value, { duration: 300 }),
   }));
 
   const noop = () => {};
@@ -89,9 +89,10 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     // borderRadius: 25,
     shadowColor: "black",
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: -5 },
     shadowRadius: 10,
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
+    elevation: 10,
   },
 });
 

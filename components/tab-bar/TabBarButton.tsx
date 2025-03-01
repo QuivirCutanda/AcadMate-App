@@ -32,7 +32,7 @@ const TabBarButton = ({
   }, [isFocused, scale]);
 
   const animatedIconStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: interpolate(scale.value, [0, 1], [1, 1.3]) }],
+    transform: [{ scale: interpolate(scale.value, [0, 1], [1, 1]) }],
     top: interpolate(scale.value, [0, 1], [0, 8]),
   }));
 
