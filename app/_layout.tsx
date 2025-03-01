@@ -3,17 +3,18 @@ import { useFonts } from 'expo-font';
 import { useRouter,Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import "../global.css";
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { enableScreens } from "react-native-screens";
 SplashScreen.preventAutoHideAsync();
 
 const StackLayout = ()=>{
   const router = useRouter();
   useEffect(() => {
-    if(true) return router.replace("/onBoarding");
+    // if(true) return router.replace("/onBoarding");
   },[])
 
 
@@ -44,9 +45,9 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-     <StackLayout />
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    <GestureHandlerRootView style={{ flex: 1 }}>
+        <StackLayout />
+        <StatusBar style="auto" />
+    </GestureHandlerRootView>
+  )
 }
