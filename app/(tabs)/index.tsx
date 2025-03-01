@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, SafeAreaView } from "react-native";
 import React from "react";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
 import { FlatList } from "react-native";
@@ -14,7 +14,7 @@ const DashBoard = () => {
   const { scrollHandler } = useScroll();
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#f3f3f3",  padding: 16 }}>
+    <View className="flex-1 bg-primary px-4">
       <Animated.FlatList
         data={dummyData}
         keyExtractor={(item) => item.id}
