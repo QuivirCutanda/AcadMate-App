@@ -50,7 +50,7 @@ const TabBarButton = ({
   return (
     <Pressable onPress={onPress} onLongPress={onLongPress} style={styles.container}>
       <Animated.View style={animatedIconStyle}>
-        {IconComponent && IconComponent({ color })}
+        {IconComponent && IconComponent({ isFocused, color })}
       </Animated.View>
       <Animated.Text style={[{ color, fontSize: 10 }, animatedTextStyle]}>
         {label}
