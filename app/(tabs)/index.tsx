@@ -1,7 +1,6 @@
-import { View, Text, SafeAreaView } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
-import { FlatList } from "react-native";
 import { useScroll } from "@/components/ScrollContext";
 
 const dummyData = Array.from({ length: 20 }, (_, index) => ({
@@ -19,19 +18,12 @@ const DashBoard = () => {
         data={dummyData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View
-            style={{
-              backgroundColor: "green",
-              padding: 16,
-              marginBottom: 12,
-              borderRadius: 12,
-            }}
-          >
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+          <TouchableOpacity className="p-4 border  rounded border-secondary mb-4" onPress={()=>console.log("Pressed..")}>
+            <Text className="text-lg font-normal text-secondary">
               {item.title}
             </Text>
-            <Text>{item.description}</Text>
-          </View>
+            <Text className=" text-secondary">{item.description}</Text>
+          </TouchableOpacity>
         )}
         onScroll={scrollHandler} 
         scrollEventThrottle={16}

@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import TabBarButton from "./TabBarButton";
 import Animated, {
   useAnimatedStyle,
-  withSpring,
+  withTiming,
   useAnimatedReaction,
   useSharedValue,
 } from "react-native-reanimated";
@@ -34,13 +34,10 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   const animatedTabBarStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: withSpring(tabBarVisibility.value === 1 ? 0 : 100, { duration: 300 }),
+        translateY: withTiming(tabBarVisibility.value === 1 ? 0 : 100, { duration: 300 }),
       },
     ],
-    opacity: withSpring(tabBarVisibility.value, { duration: 300 }),
   }));
-
-  const noop = () => {};
 
   return (
     <Animated.View style={[styles.container, animatedTabBarStyle]}>
@@ -66,9 +63,9 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
             isFocused={isFocused}
             label={label}
             routeName={name as "index" | "study" | "finance" | "account"}
-            color={isFocused ? "#7DABF6" : "#666"}
+            color={isFocused ? "#005595" : "#666"}
             onPress={onPress}
-            onLongPress={noop}
+            onLongPress={() => {}}
           />
         );
       })}
@@ -80,14 +77,11 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     bottom: 0,
-    // left: 20,
-    // right: 20,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
     backgroundColor: "#fff",
     paddingVertical: 5,
-    // borderRadius: 25,
     shadowColor: "black",
     shadowOffset: { width: 0, height: -5 },
     shadowRadius: 10,

@@ -4,6 +4,7 @@ import LottieView from "lottie-react-native";
 import AppIntroSlider from "react-native-app-intro-slider";
 import { useRouter } from "expo-router";
 import NextArrow from "@/assets/animation/next-arrow.json";
+import Celebration from "@/assets/animation/celebration.json";
 
 const slides = [
   {
@@ -44,8 +45,8 @@ export default function OnBoarding() {
       renderItem={({ item }) => (
         <View className="flex-1 items-center justify-center p-4">
           <LottieView autoPlay loop source={item.icon} style={{ width: "100%", height: "60%" }} />
-          <Text className="font-bold text-lg p-4">{item.title}</Text>
-          <Text className="font-normal text-sm p-4 text-center">{item.description}</Text>
+          <Text className="font-bold text-lg p-4 text-secondary">{item.title}</Text>
+          <Text className="font-normal text-sm p-4 text-center text-secondary">{item.description}</Text>
         </View>
       )}
       renderPagination={(activeIndex) => (
@@ -55,7 +56,7 @@ export default function OnBoarding() {
             {slides.map((_, index) => (
               <View
                 key={index}
-                className={`mx-1 rounded-full ${activeIndex === index ? "bg-blue-500 w-6 h-2" : "bg-gray-300 w-2 h-2"}`}
+                className={`mx-1 rounded-full ${activeIndex === index ? "bg-secondary w-6 h-2" : "bg-gray-300 w-2 h-2"}`}
               />
             ))}
           </View>
@@ -74,7 +75,7 @@ export default function OnBoarding() {
                   className="px-4 py-2 flex-row items-center hover:bg-gray-200 rounded-full"
                   onPress={() => goToSlide(activeIndex + 1)}
                 >
-                  <Text className="text-blue-500 font-bold pr-10">Next</Text>
+                  <Text className="text-secondary font-bold pr-10">Next</Text>
                   <LottieView
                     autoPlay
                     loop
@@ -91,7 +92,16 @@ export default function OnBoarding() {
               </>
             ) : (
               // Done Button
-              <TouchableOpacity className="px-6 py-2 bg-green-500 rounded-full ml-auto" onPress={() => router.replace("/(tabs)")}>
+              <TouchableOpacity className="px-6 py-2 bg-secondary rounded-full ml-auto" onPress={() => router.replace("/(tabs)")}>
+                <LottieView
+                    autoPlay
+                    loop={false}
+                    source={Celebration}
+                    style={{
+                      padding:50,
+                      position:"absolute",
+                    }}
+                    />
                 <Text className="text-white font-bold">Done</Text>
               </TouchableOpacity>
             )}
