@@ -9,7 +9,7 @@ import Button from "@/src/components/Button";
 import TodoCard from "@/src/components/todolist/TodoCard";
 import BalanceCard from "@/src/components/finance/BalanceCard";
 import { AntDesign, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
-import AskAIButton from "@/src/components/AskAIButton"; // Import new component
+import AskAIButton from "@/src/components/AskAIButton"; 
 
 const studyData = [
   { id: 1, title: "Study", progress: 50, icon: AntDesign, iconName: "book" },
@@ -124,9 +124,7 @@ const StudyScreen = () => {
       </Animated.ScrollView>
 
       {/* Ask AI Button */}
-      <TouchableOpacity onPress={() => console.log("AI clicked..")}>
-        <AskAIButton />
-      </TouchableOpacity>
+      <AskAIButton onPress={() => console.log("AI clicked..")} />
     </View>
   );
 };

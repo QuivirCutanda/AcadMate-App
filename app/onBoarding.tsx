@@ -45,8 +45,8 @@ export default function OnBoarding() {
       renderItem={({ item }) => (
         <View className="flex-1 items-center justify-center p-4">
           <LottieView autoPlay loop source={item.icon} style={{ width: "100%", height: "60%" }} />
-          <Text className="font-bold text-lg p-4 text-secondary">{item.title}</Text>
-          <Text className="font-normal text-sm p-4 text-center text-secondary">{item.description}</Text>
+          <Text className="font-bold text-xl p-4 text-secondary">{item.title}</Text>
+          <Text className="font-normal text-base p-4 text-center text-secondary">{item.description}</Text>
         </View>
       )}
       renderPagination={(activeIndex) => (

@@ -1,12 +1,10 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-
+import { View, Text } from "react-native";
+import React from "react";
+import StudyScreen from "@/src/study/StudyScreen";
 const study = () => {
   return (
-    <View className='flex-1 justify-center items-center'>
-      <Text>study</Text>
-    </View>
-  )
-}
+      <StudyScreen />
+  );
+};
 
-export default study
+export default study;

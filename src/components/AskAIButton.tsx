@@ -1,11 +1,15 @@
 import React from "react";
+import { Pressable, TouchableOpacity } from "react-native";
 import Animated, { useAnimatedStyle, useDerivedValue, withSpring, interpolate } from "react-native-reanimated";
 import LottieView from "lottie-react-native";
 
 import AI from "@/assets/animation/AI-icon.json";
 import { useScroll } from "@/components/ScrollContext";
 
-const AskAIButton = () => {
+interface AskAIButtonProps{
+  onPress:()=>void;
+}
+const AskAIButton = ({ onPress }:AskAIButtonProps) => {
   const { scrollY } = useScroll();
 
   const animatedSize = useDerivedValue(() =>
@@ -30,26 +34,28 @@ const AskAIButton = () => {
   const textAnimatedStyle = useAnimatedStyle(() => ({
     opacity: textOpacity.value,
     transform: [{ translateX: interpolate(textOpacity.value, [0, 1], [-10, 0]) }], 
-    right:10
+    right: 10
   }));
 
   const lottieAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: interpolate(animatedSize.value, [50, 130], [0, -15]) }], 
-    left:scrollY.value < 50 ? 10 :10
+    left: scrollY.value < 50 ? 10 : 10
   }));
 
   return (
-    <Animated.View
-      style={[animatedStyle]}
-      className="absolute bottom-20 right-5 bg-primary shadow-lg shadow-secondary"
-    >
-      <Animated.View style={lottieAnimatedStyle}>
-        <LottieView autoPlay loop source={AI} style={{ width: 44, height: 44 }} />
+    <TouchableOpacity onPress={onPress} className="absolute bottom-20 right-5">
+      <Animated.View
+        style={[animatedStyle]}
+        className=" bg-primary shadow-lg shadow-secondary"
+      >
+        <Animated.View style={lottieAnimatedStyle}>
+          <LottieView autoPlay loop source={AI} style={{ width: 44, height: 44 }} />
+        </Animated.View>
+        <Animated.Text style={[textAnimatedStyle]} className="font-bold text-base text-secondary ml-2">
+          Ask AI
+        </Animated.Text>
       </Animated.View>
-      <Animated.Text style={[textAnimatedStyle]} className="font-bold text-base text-secondary ml-2">
-        Ask AI
-      </Animated.Text>
-    </Animated.View>
+    </TouchableOpacity>
   );
 };
 
