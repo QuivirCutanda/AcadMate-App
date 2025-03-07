@@ -3,7 +3,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Platform, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useFonts } from "expo-font";
 import { useRouter, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -11,10 +11,9 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import "../global.css";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { enableScreens } from "react-native-screens";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context"; // ✅ Use SafeAreaProvider
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import "../global.css";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,7 +21,7 @@ const StackLayout = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (true) return router.replace("/onBoarding");
+    // if (true) return router.replace("/onBoarding");
   }, []);
 
   return (
@@ -51,16 +50,23 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.safeContainer} edges={["top", "left", "right"]}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-            <StackLayout />
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </GestureHandlerRootView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <>
+      <StatusBar style="light" backgroundColor="#005596" />
+      <SafeAreaProvider>
+        <SafeAreaView
+          style={styles.safeContainer}
+          edges={["top", "left", "right"]}
+        >
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <StackLayout />
+            </ThemeProvider>
+          </GestureHandlerRootView>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </>
   );
 }
 
