@@ -1,12 +1,13 @@
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useEffect } from "react";
-import Animated, { 
-  interpolate, 
-  useAnimatedStyle, 
-  useSharedValue, 
-  withSpring 
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
 } from "react-native-reanimated";
 import { icons } from "@/assets/icon/icons";
+import LottieView from "lottie-react-native";
 
 interface TabBarButtonProps {
   isFocused: boolean;
@@ -48,21 +49,25 @@ const TabBarButton = ({
   const IconComponent = icons[routeName];
 
   return (
-    <Pressable onPress={onPress} onLongPress={onLongPress} style={styles.container}>
-      <Animated.View style={animatedIconStyle}>
-        {IconComponent && IconComponent({ isFocused, color })}
-      </Animated.View>
-      <Animated.Text style={[{ color, fontSize: 10 }, animatedTextStyle]}>
-        {label}
-      </Animated.Text>
-      <Animated.View
-        style={[
-          styles.activeLine,
-          { backgroundColor: color },
-          animatedLineStyle,
-        ]}
-      />
-    </Pressable>
+      <Pressable
+        onPress={onPress}
+        onLongPress={onLongPress}
+        style={styles.container}
+      >
+        <Animated.View style={animatedIconStyle}>
+          {IconComponent && IconComponent({ isFocused, color })}
+        </Animated.View>
+        <Animated.Text style={[{ color, fontSize: 10 }, animatedTextStyle]}>
+          {label}
+        </Animated.Text>
+        <Animated.View
+          style={[
+            styles.activeLine,
+            { backgroundColor: color },
+            animatedLineStyle,
+          ]}
+        />
+      </Pressable>
   );
 };
 
