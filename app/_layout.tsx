@@ -21,7 +21,7 @@ const StackLayout = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // if (true) return router.replace("/onBoarding");
+    if (true) return router.replace("/onBoarding");
   }, []);
 
   return (
