@@ -21,12 +21,20 @@ const StackLayout = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (true) return router.replace("/onBoarding");
+    // if (true) return router.replace("/onBoarding");
   }, []);
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    <Stack
+      initialRouteName="(tabs)"
+      screenOptions={{
+        animation: "slide_from_right", 
+        gestureEnabled: true, 
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="(tabs-AI)" options={{ headerShown: false }} />
+      <Stack.Screen name="(askAI)" options={{ headerShown: false }} />
       <Stack.Screen name="onBoarding" options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" />
     </Stack>

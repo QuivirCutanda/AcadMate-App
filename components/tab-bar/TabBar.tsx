@@ -7,7 +7,6 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { useScroll } from "@/components/ScrollContext";
-import LottieView from "lottie-react-native";
 
 type TabBarProps = {
   state: any;
@@ -49,7 +48,6 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
           const { options } = descriptors[key] || {};
           const label = options?.tabBarLabel ?? options?.title ?? name;
           const isFocused = state.index === index;
-
           const onPress = () => {
             const event = navigation.emit({
               type: "tabPress",
@@ -58,6 +56,7 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
             });
             if (!isFocused && !event.defaultPrevented) {
               navigation.navigate(name);
+              console.log("Route Name: "+name);
             }
           };
 
@@ -66,7 +65,7 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
                 key={key}
                 isFocused={isFocused}
                 label={label}
-                routeName={name as "index" | "study" | "finance" | "account"}
+                routeName={name as "(home)" | "(study)" | "(finance)" | "(userAccount)"}
                 color={isFocused ? "#005595" : "#666"}
                 onPress={onPress}
                 onLongPress={() => {}}

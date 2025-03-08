@@ -7,12 +7,11 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { icons } from "@/assets/icon/icons";
-import LottieView from "lottie-react-native";
 
 interface TabBarButtonProps {
   isFocused: boolean;
   label: string;
-  routeName: "index" | "study" | "finance" | "account";
+  routeName: "(home)" | "(study)" | "(finance)" | "(userAccount)";
   color: string;
   onPress: () => void;
   onLongPress: () => void;
