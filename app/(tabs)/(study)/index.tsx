@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
-import Header from "../components/Header";
-import StudyCard from "./StudyCard";
+import Header from "@/src/components/Header";
+import StudyCard from "@/src/study/StudyCard";
 import Animated from "react-native-reanimated";
 
 import {
@@ -9,7 +9,7 @@ import {
   MaterialCommunityIcons,
   Ionicons,
 } from "@expo/vector-icons";
-import AskAIButton from "../components/AskAIButton";
+import AskAIButton from "@/src/components/AskAIButton";
 import { useScroll } from "@/components/ScrollContext";
 
 const StudyList = [
@@ -38,8 +38,7 @@ const StudyList = [
     description: "Never miss study time!",
   },
 ];
-
-const StudyScreen = () => {
+const study = () => {
   const { scrollHandler } = useScroll();
 
   return (
@@ -73,4 +72,4 @@ const StudyScreen = () => {
   );
 };
 
-export default StudyScreen;
+export default study;

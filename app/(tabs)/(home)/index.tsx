@@ -10,6 +10,7 @@ import TodoCard from "@/src/components/todolist/TodoCard";
 import BalanceCard from "@/src/components/finance/BalanceCard";
 import { AntDesign, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import AskAIButton from "@/src/components/AskAIButton"; 
+import { router } from "expo-router";
 
 const studyData = [
   { id: 1, title: "Study", progress: 50, icon: AntDesign, iconName: "book" },
@@ -56,8 +57,7 @@ const studyData = [
     iconName: "self-improvement",
   },
 ];
-
-const StudyScreen = () => {
+const DashBoard = () => {
   const { scrollHandler } = useScroll();
 
   return (
@@ -124,9 +124,9 @@ const StudyScreen = () => {
       </Animated.ScrollView>
 
       {/* Ask AI Button */}
-      <AskAIButton onPress={() => console.log("AI clicked..")} />
+      <AskAIButton onPress={() => router.push("/(tabs-AI)")} />
     </View>
   );
 };
 
-export default StudyScreen;
+export default DashBoard;
