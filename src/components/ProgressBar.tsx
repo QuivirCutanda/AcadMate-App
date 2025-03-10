@@ -22,7 +22,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress, fillColor, fillBack
     <View className="flex w-full">
       <View
         style={{ backgroundColor: fillBackgroundColor }}
-        className="w-full h-2 rounded-full overflow-hidden"
+        className="w-full h-3 rounded-full overflow-hidden"
       >
         <Animated.View
           style={{
@@ -37,8 +37,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress, fillColor, fillBack
       </View>
 
       <View className="flex-row justify-between items-center mt-1">
-        <Text className="text-sm text-secondary font-normal">Progress</Text>
-        <Text className="text-sm text-secondary font-normal">{progress}%</Text>
+        <Text className="text-base text-secondary font-normal">Progress</Text>
+        <Text className="text-base text-secondary font-normal">{progress}%</Text>
       </View>
     </View>
   );

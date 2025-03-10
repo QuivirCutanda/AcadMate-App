@@ -13,11 +13,11 @@ const AskAIButton = ({ onPress }:AskAIButtonProps) => {
   const { scrollY } = useScroll();
 
   const animatedSize = useDerivedValue(() =>
-    withSpring(scrollY.value < 50 ? 50 : 130, { damping: 15, stiffness: 120 })
+    withSpring(scrollY.value < 20 ? 50 : 150, { damping: 15, stiffness: 120 })
   );
 
   const textOpacity = useDerivedValue(() =>
-    withSpring(scrollY.value < 50 ? 0 : 1, { damping: 100, stiffness: 120 })
+    withSpring(scrollY.value < 20 ? 0 : 1, { damping: 100, stiffness: 120 })
   );
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -49,9 +49,9 @@ const AskAIButton = ({ onPress }:AskAIButtonProps) => {
         className=" bg-primary shadow-lg shadow-secondary"
       >
         <Animated.View style={lottieAnimatedStyle}>
-          <LottieView autoPlay loop source={AI} style={{ width: 44, height: 44 }} />
+          <LottieView autoPlay loop source={AI} style={{ width: 50, height: 50 }} />
         </Animated.View>
-        <Animated.Text style={[textAnimatedStyle]} className="font-bold text-base text-secondary ml-2">
+        <Animated.Text style={[textAnimatedStyle]} className="font-bold text-lg text-secondary ml-4">
           Ask AI
         </Animated.Text>
       </Animated.View>

@@ -21,13 +21,13 @@ const StudyCard: React.FC<StudyCardProps> = ({
   onPress,
 }) => (
   <TouchableOpacity
-    className="flex-row items-center bg-secondary rounded-2xl p-4 gap-3"
+    className="flex-row items-center bg-secondary rounded-2xl p-4 gap-4"
     onPress={onPress}
   >
     <Icon name={iconName} size={iconSize} color={iconColor} />
     <View>
-      <Text className="text-primary text-lg font-bold">{title}</Text>
-      <Text className="text-primary text-sm font-normal">{description}</Text>
+      <Text className="text-primary text-xl font-bold">{title}</Text>
+      <Text className="text-primary text-base font-normal">{description}</Text>
     </View>
   </TouchableOpacity>
 );

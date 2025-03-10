@@ -26,6 +26,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
         <data android:scheme="com.AcadMate.app"/>
+        <data android:scheme="exp+acadmate"/>
       </intent-filter>
     </activity>
   </application>

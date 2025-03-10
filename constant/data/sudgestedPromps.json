@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "title": "Solve Math Problems",
+    "iconName": "calculate",
+    "description": "Solve this math problem"
+  },
+    {
+      "id": 2,
+      "title": "Summarize Text",
+      "iconName": "summarize",
+      "description": "Summarize text"
+    },
+    {
+      "id": 3,
+      "title": "Coding Help",
+      "iconName": "laptop-code",
+      "description": "Help me with coding"
+    },
+    {
+      "id": 4,
+      "title": "Write an Essay",
+      "iconName": "book",
+      "description": "Write an essay"
+    }
+   
+  ]
+  

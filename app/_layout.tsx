@@ -1,3 +1,4 @@
+import '@/gesture-handler';
 import {
   DarkTheme,
   DefaultTheme,
@@ -34,7 +35,6 @@ const StackLayout = () => {
       }}
     >
       <Stack.Screen name="(tabs-AI)" options={{ headerShown: false }} />
-      <Stack.Screen name="(askAI)" options={{ headerShown: false }} />
       <Stack.Screen name="onBoarding" options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" />
     </Stack>
