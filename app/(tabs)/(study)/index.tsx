@@ -3,6 +3,7 @@ import React from "react";
 import Header from "@/src/components/Header";
 import StudyCard from "@/src/study/StudyCard";
 import Animated from "react-native-reanimated";
+import { useRouter } from "expo-router";
 
 import {
   MaterialIcons,
@@ -40,7 +41,7 @@ const StudyList = [
 ];
 const study = () => {
   const { scrollHandler } = useScroll();
-
+  const router = useRouter();
   return (
     <>
       <Header />
@@ -50,7 +51,7 @@ const study = () => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="text-2xl font-bold text-secondary my-4">
+        <Text className="text-2xl font-bold text-secondary my-4 pb-4">
           How can I help you?
         </Text>
         {StudyList.map((item, index) => (
@@ -58,7 +59,7 @@ const study = () => {
             <StudyCard
               icon={item.icon}
               iconName={item.iconName}
-              iconSize={32}
+              iconSize={40}
               title={item.title}
               description={item.description}
               iconColor="#FFFFFF"
@@ -67,7 +68,7 @@ const study = () => {
           </View>
         ))}
       </Animated.ScrollView>
-      <AskAIButton onPress={() => console.log("OK")} />
+      <AskAIButton onPress={() =>router.push("/(tabs-AI)")} />
     </>
   );
 };

@@ -13,7 +13,7 @@ const CustomButton: React.FC<ButtonProps> = ({ title, onPress, className = "", t
       onPress={onPress}
       className={`mt-4 bg-accent rounded-md ${className}`}
     >
-      <Text className={`text-primary text-center font-normal py-2  text-sm ${textClassName}`}>
+      <Text className={`text-primary text-center font-normal py-2  text-base ${textClassName}`}>
         {title}
       </Text>
     </TouchableOpacity>

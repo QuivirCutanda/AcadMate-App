@@ -1,13 +1,21 @@
-import { Stack } from "expo-router";
+import { Tabs } from "expo-router";
+import React from "react";
+import TabBar from "@/components/tab-bar/TabBar";
 
 export default function TabLayout() {
   return (
-    <Stack
+    <Tabs
       screenOptions={{
-        animation: "slide_from_right",
-        gestureEnabled: true,
         headerShown: false,
       }}
-    />
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "AcadMate AI",
+          tabBarStyle: { display: "none" },
+        }}
+      />
+    </Tabs>
   );
 }

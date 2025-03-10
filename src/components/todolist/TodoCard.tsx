@@ -21,7 +21,7 @@ const TodoCard: React.FC<TodoCardProps> = ({
 }) => (
   <View className="p-4 bg-primary rounded-2xl gap-2">
     <View className="flex-row gap-4 items-center">
-      <View className="justify-center items-center w-8 h-8 bg-secondary rounded-full">
+      <View className="justify-center items-center p-2 bg-secondary rounded-full">
         <IconComponent name={iconName} size={iconSize} color={iconColor} />
       </View>
       <Text numberOfLines={2} ellipsizeMode="tail" className="font-semibold text-lg text-secondary">
