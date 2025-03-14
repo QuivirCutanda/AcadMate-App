@@ -56,7 +56,7 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
             });
             if (!isFocused && !event.defaultPrevented) {
               navigation.navigate(name);
-              console.log("Route Name: "+name);
+              // console.log("Route Name: "+name);
             }
           };
 

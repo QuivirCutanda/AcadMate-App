@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Drawer } from "react-native-drawer-layout";
 import { useRouter } from "expo-router";
 import Header from "@/src/AI/component/AIHeader";
@@ -7,11 +7,13 @@ import ChatHistory from "@/src/AI/component/DrawerComponent";
 import { View, Text, ScrollView } from "react-native";
 import { chatHistorySample } from "@/constant/chatHistorySample.json";
 
+
 export default function ChatScreen() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [clearChat, setClearChat] = useState<() => void>(() => () => {});
 
+  
   return (
     <Drawer
       open={open}
@@ -29,9 +31,10 @@ export default function ChatScreen() {
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
           >
-            {chatHistorySample.map((history: any, index: number) => (
+            {/* {chatHistorySample.map((history: any, index: number) => (
               <ChatHistory title={history} key={index}/>
-            ))}
+            ))} */}
+           <Text className="text-center text-secondary font-normal">No data available</Text>
           </ScrollView>
         </View>
       )}

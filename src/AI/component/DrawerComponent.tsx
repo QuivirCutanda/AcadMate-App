@@ -9,7 +9,7 @@ export default function ChatHistory({ title }: ChatHistoryProps) {
   return (
     <TouchableOpacity>
       <Text
-        className="text-base font-semibold py-2 px-4 text-secondary"
+        className="text-base font-semibold p-4 text-secondary"
         numberOfLines={1}
         ellipsizeMode="tail"
       >
