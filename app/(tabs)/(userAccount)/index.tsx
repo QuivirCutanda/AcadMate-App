@@ -1,23 +1,50 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { Entypo } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import { View, Text, ToastAndroid } from "react-native";
 import settingsData from "@/constant/data/settings.json";
 import Avatar from "@/src/components/Avatar";
 import SettingItem from "@/src/components/userAccount/userAccount";
+import { useRouter } from "expo-router";
+import { loadUserData } from "@/src/components/userAccount/utils/storage";
 
 const Account = () => {
   const [notifications, setNotifications] = useState(false);
+  const router = useRouter();
+  const [userData, setUserData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    profilePic: null as string | null,
+  });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const storedData = await loadUserData();
+      setUserData((prev) => ({
+        ...prev,
+        ...storedData,
+      }));
+    };
+    fetchUserData();
+  }, []);
 
   const handleOnPress = (id: number) => {
     switch (id) {
       case 1:
+        router.navigate("./updateProfile");
         console.log(1);
         break;
       case 2:
         console.log(2);
         break;
       case 3:
-        !notifications ? setNotifications(true) : setNotifications(false);
+        setNotifications((prev) => {
+          const newValue = !prev;
+          ToastAndroid.show(
+            newValue ? "Turn On Notification" : "Turn Off Notification",
+            ToastAndroid.SHORT
+          );
+          return newValue;
+        });
         break;
       case 4:
         console.log(4);
@@ -31,10 +58,19 @@ const Account = () => {
   return (
     <View className="flex-1 items-center gap-4">
       <View className="bg-secondary w-full p-8 rounded-b-3xl items-center gap-4">
-        <Avatar size={80} source={require("@/assets/Avatar/avatar.jpg")} />
+        <Avatar
+          size={80}
+          source={
+            userData.profilePic
+              ? { uri: userData.profilePic }
+              : require("@/assets/Avatar/user.png")
+          }
+        />
 
         <Text className="text-lg font-bold text-primary text-center">
-          Quivir Cutanda
+          {userData.firstName
+            ? userData.firstName + " " + userData.lastName
+            : "Hello, User"}
         </Text>
       </View>
 

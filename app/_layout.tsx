@@ -17,6 +17,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setupDatabase } from "@/src/database/database";
 import "../global.css";
+import { Provider as PaperProvider } from "react-native-paper"; 
 
 SplashScreen.preventAutoHideAsync();
 
@@ -91,16 +92,13 @@ export default function RootLayout() {
     <>
       <StatusBar style="light" backgroundColor="#005596" />
       <SafeAreaProvider>
-        <SafeAreaView
-          style={styles.safeContainer}
-          edges={["top", "left", "right"]}
-        >
+        <SafeAreaView style={styles.safeContainer} edges={["top", "left", "right"]}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-              <StackLayout />
-            </ThemeProvider>
+            <PaperProvider> 
+              <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+                <StackLayout />
+              </ThemeProvider>
+            </PaperProvider>
           </GestureHandlerRootView>
         </SafeAreaView>
       </SafeAreaProvider>
@@ -114,3 +112,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 });
+
