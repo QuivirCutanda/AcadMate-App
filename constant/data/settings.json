@@ -1,0 +1,29 @@
+[
+    {
+      "id": 1,
+      "title": "Edit Profile",
+      "icon": "user"
+    },
+    {
+      "id": 2,
+      "title": "Theme",
+      "icon": "moon"
+    },
+    {
+      "id": 3,
+      "title": "Notifications",
+      "icon": "bell",
+      "isSwitch": true
+    },
+    {
+      "id": 4,
+      "title": "Currency",
+      "icon": "dollar-sign"
+    },
+    {
+      "id": 5,
+      "title": "About",
+      "icon": "info"
+    }
+  ]
+  
