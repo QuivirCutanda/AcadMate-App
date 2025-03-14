@@ -12,6 +12,7 @@ export default function TabLayout() {
         tabBar={(props) => <TabBar {...props} />}
       >
         <Tabs.Screen name="index" options={{ title: "Me" }} />
+        <Tabs.Screen name="updateProfile" options={{ title: "UpdateProfile" }} />
       </Tabs>
     </ScrollProvider>
   );

@@ -2,9 +2,27 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
 import Avatar from "@/src/components/Avatar";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { loadUserData } from "@/src/components/userAccount/utils/storage";
 
 const Header = () => {
   const [currentDate, setCurrentDate] = useState("");
+  const [userData, setUserData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    profilePic: null as string | null,
+  });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const storedData = await loadUserData();
+      setUserData((prev) => ({
+        ...prev,
+        ...storedData,
+      }));
+    };
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const updateDate = () => {
@@ -25,10 +43,19 @@ const Header = () => {
 
   return (
     <View className="flex-row items-center justify-between py-4 bg-secondary rounded-b-3xl shadow-lg shadow-black">
-      <Avatar source={require("@/assets/Avatar/avatar.jpg")} size={34} />
+      <Avatar
+        source={
+          userData.profilePic
+            ? { uri: userData.profilePic }
+            : require("@/assets/Avatar/user.png")
+        }
+        size={34}
+      />
       <View className="flex-1">
         <Text className="text-lg font-bold text-primary">
-          Hi, Quivir Cutanda
+          {userData.firstName
+            ? userData.firstName + " " + userData.lastName
+            : "Welcome User"}
         </Text>
         <Text className="text-base text-primary">{currentDate}</Text>
       </View>
