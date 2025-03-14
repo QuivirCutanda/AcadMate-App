@@ -8,10 +8,13 @@ interface CustomAvatarProps {
   size: number;
 }
 
-const CustomAvatar: React.FC<CustomAvatarProps> = ({ source = require("@/assets/Avatar/user.png"), size = 34 }) => {
+const CustomAvatar: React.FC<CustomAvatarProps> = ({
+  source = require("@/assets/Avatar/user.png"),
+  size = 34,
+}) => {
   return (
     <View className="mx-4 rounded-full border border-primary flex justify-center items-center p-1">
-        <Avatar.Image size={size} source={source}/>
+      <Avatar.Image size={size} source={source} />
     </View>
   );
 };
