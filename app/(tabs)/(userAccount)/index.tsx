@@ -25,7 +25,7 @@ const Account = () => {
       }));
     };
     fetchUserData();
-  }, []);
+  }, [loadUserData()]);
 
   const handleOnPress = (id: number) => {
     switch (id) {

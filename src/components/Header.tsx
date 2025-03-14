@@ -3,8 +3,10 @@ import React, { useState, useEffect } from "react";
 import Avatar from "@/src/components/Avatar";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { loadUserData } from "@/src/components/userAccount/utils/storage";
+import { useRouter } from "expo-router";
 
 const Header = () => {
+  const router = useRouter();
   const [currentDate, setCurrentDate] = useState("");
   const [userData, setUserData] = useState({
     firstName: "",
@@ -22,7 +24,7 @@ const Header = () => {
       }));
     };
     fetchUserData();
-  }, []);
+  }, [loadUserData()]);
 
   useEffect(() => {
     const updateDate = () => {
@@ -43,14 +45,19 @@ const Header = () => {
 
   return (
     <View className="flex-row items-center justify-between py-4 bg-secondary rounded-b-3xl shadow-lg shadow-black">
-      <Avatar
-        source={
-          userData.profilePic
-            ? { uri: userData.profilePic }
-            : require("@/assets/Avatar/user.png")
-        }
-        size={34}
-      />
+      <TouchableOpacity
+      activeOpacity={.7}
+      onPress={()=>router.navigate("/(tabs)/(userAccount)")}
+      >
+        <Avatar
+          source={
+            userData.profilePic
+              ? { uri: userData.profilePic }
+              : require("@/assets/Avatar/user.png")
+          }
+          size={34}
+        />
+      </TouchableOpacity>
       <View className="flex-1">
         <Text className="text-lg font-bold text-primary">
           {userData.firstName
