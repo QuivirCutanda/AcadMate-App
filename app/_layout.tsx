@@ -1,4 +1,4 @@
-import '@/gesture-handler';
+import "@/gesture-handler";
 import {
   DarkTheme,
   DefaultTheme,
@@ -9,28 +9,58 @@ import { useFonts } from "expo-font";
 import { useRouter, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setupDatabase } from "@/src/database/database";
 import "../global.css";
 
 SplashScreen.preventAutoHideAsync();
 
 const StackLayout = () => {
   const router = useRouter();
+  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // if (true) return router.replace("/onBoarding");
+    const checkFirstLaunch = async () => {
+      try {
+        const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
+
+        if (hasSeenOnboarding === null) {
+          await AsyncStorage.setItem("hasSeenOnboarding", "true");
+          setIsFirstLaunch(true);
+        } else {
+          setIsFirstLaunch(false);
+        }
+      } catch (error) {
+        console.error("Error checking onboarding status:", error);
+        setIsFirstLaunch(false);
+      }
+    };
+
+    setupDatabase();
+    checkFirstLaunch();
   }, []);
+
+  useEffect(() => {
+    if (isFirstLaunch === true) {
+      router.replace("/onBoarding");
+    }
+  }, [isFirstLaunch]);
+
+  if (isFirstLaunch === null) {
+    return null; 
+  }
 
   return (
     <Stack
       initialRouteName="(tabs)"
       screenOptions={{
-        animation: "slide_from_right", 
-        gestureEnabled: true, 
+        animation: "slide_from_right",
+        gestureEnabled: true,
         headerShown: false,
       }}
     >

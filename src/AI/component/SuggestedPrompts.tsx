@@ -1,9 +1,9 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { MaterialIcons, AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import { MaterialIcons, AntDesign, FontAwesome5  } from "@expo/vector-icons";
 import suggestedPrompts from "@/constant/data/sudgestedPromps.json";
-
+import TemporaryChat from "./TemporaryChat";
 const iconMapping: Record<string, React.ComponentType<any>> = {
   summarize: MaterialIcons,
   "laptop-code": FontAwesome5,
@@ -21,6 +21,7 @@ const SuggestedPrompts = ({ handlePress, IsHidden }: SuggestedPromptsProps) => {
 
   return (
     <View className="flex-1 justify-center items-center mt-14 px-4">
+      <TemporaryChat/>
       <Text className="text-xl text-secondary font-bold mb-4">
         What can I help with?
       </Text>
