@@ -5,13 +5,18 @@ import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import ProfileForm from "@/src/components/userAccount/ProfileForm";
-import Successful from "@/assets/animation/Successful.json";
+import useHideTabBar from "@/src/hooks/useHideTabBar";
+import CustomModal from "@/src/components/CustomModal";
+import Sucess from "@/assets/animation/Successful.json";
+
 import {
   loadUserData,
   saveUserData,
 } from "@/src/components/userAccount/utils/storage";
+import LottieView from "lottie-react-native";
 
 const UpdateProfile = () => {
+  useHideTabBar();
   const router = useRouter();
   const [userData, setUserData] = useState({
     firstName: "",
@@ -20,6 +25,7 @@ const UpdateProfile = () => {
     profilePic: null as string | null,
   });
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -65,11 +71,30 @@ const UpdateProfile = () => {
 
   return (
     <>
+      <CustomModal
+        visible={modalVisible}
+        onOk={() =>{
+          setModalVisible(false)
+          router.back();
+        }
+      } 
+      >
+        <LottieView
+        autoPlay
+        loop={false}
+        source={Sucess}
+        style={{width:250,height:100}}
+        />
+        <Text className="text-center text-green-500 text-lg font-bold">
+          Update Successfully
+        </Text>
+      </CustomModal>
       <View className="p-4 bg-secondary flex-row items-center gap-4">
-        <TouchableOpacity onPress={router.back} className="ml-2">
+        <TouchableOpacity onPress={router.back} className="ml-2 flex-1">
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text className="text-primary text-lg font-bold">Update Profile</Text>
+        <View className="flex-1"></View>
       </View>
 
       <ProfileForm
@@ -87,13 +112,14 @@ const UpdateProfile = () => {
         pickImage={pickImage}
       />
 
-      <View className="flex-1"></View>
+      <View className="flex-1  bg-[#E0E0E0]"></View>
+      <View className="bg-[#E0E0E0]">  
       <TouchableOpacity
         onPress={async () => {
           await saveProfile();
-          router.back();
+          setModalVisible(true);
         }}
-        className={`mt-4 mb-20 mx-4 px-6 py-3 rounded-lg flex flex-row justify-center items-center ${
+        className={`mt-4 mb-20 mx-4 px-6 py-3  rounded-lg flex flex-row justify-center items-center ${
           userData.firstName.trim() && userData.lastName.trim() && !loading
             ? "bg-accent"
             : "bg-gray-400"
@@ -108,6 +134,7 @@ const UpdateProfile = () => {
           <Text className="text-primary text-center font-bold">Save</Text>
         )}
       </TouchableOpacity>
+      </View>
     </>
   );
 };

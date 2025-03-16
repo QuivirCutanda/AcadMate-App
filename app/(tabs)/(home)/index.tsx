@@ -49,23 +49,17 @@ const studyData = [
     icon: MaterialIcons,
     iconName: "self-improvement",
   },
-  {
-    id: 7,
-    title: "Meditate",
-    progress: 90,
-    icon: MaterialIcons,
-    iconName: "self-improvement",
-  },
 ];
 const DashBoard = () => {
   const { scrollHandler } = useScroll();
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-[#E0E0E0]">
       <Header />
       <Animated.ScrollView
         className="flex-1 p-4"
         onScroll={scrollHandler}
+        scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
       >
         <BalanceCard />
@@ -86,7 +80,7 @@ const DashBoard = () => {
           </View>
           <View className="mr-2">
             <CircularProgress
-              size={100}
+              size={90}
               progress={30}
               color="hsl(206, 100%, 70%)"
               textColor="#FFFFFF"
@@ -107,10 +101,10 @@ const DashBoard = () => {
             </TouchableOpacity>
           </View>
 
-          <View className="flex-row flex-wrap justify-center items-center gap-4 mt-4">
+          <View className="flex-row flex-wrap justify-around items-center gap-4 mt-4">
             {studyData.length ? (
               studyData.map((item) => (
-                <TouchableOpacity key={item.id} className="w-full">
+                <TouchableOpacity key={item.id} className="w-[46%]">
                   <TodoCard {...item} iconColor="#FFFFFF" />
                 </TouchableOpacity>
               ))

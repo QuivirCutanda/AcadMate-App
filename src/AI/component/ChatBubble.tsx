@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableWithoutFeedback, ToastAndroid } from "react-native";
+import {
+  View,
+  Text,
+  TouchableWithoutFeedback,
+  ToastAndroid,
+} from "react-native";
 import CodeSyntaxFormatter from "./CodeSyntaxFormatter";
 import * as Clipboard from "expo-clipboard";
 
@@ -66,7 +71,15 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ text, type }) => {
     const parts = text.split(/\*\*(.*?)\*\*/g);
     return parts.map((part, index) => {
       if (index % 2 === 1) {
-        return <Text key={index} style={{ fontWeight: "bold" }} className="text-base">{part}</Text>;
+        return (
+          <Text
+            key={index}
+            style={{ fontWeight: "bold" }}
+            className="text-base"
+          >
+            {part}
+          </Text>
+        );
       } else {
         return part;
       }
@@ -85,8 +98,10 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ text, type }) => {
     <View
       className={`p-2 m-2 rounded-lg ${
         type === "user"
-          ? "max-w-[80%] bg-[#e0e0e0] self-end m-4"
-          : displayedParts.some(part => part.length > 0) ? "w-full self-start pr-8" : ""
+          ? "max-w-[80%] bg-secondary self-end m-4"
+          : displayedParts.some((part) => part.length > 0)
+          ? "w-full self-start pr-8"
+          : ""
       }`}
     >
       {displayedParts.map((part, index) =>
@@ -95,9 +110,15 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ text, type }) => {
             <CodeSyntaxFormatter key={index} code={part} />
           ) : null
         ) : (
-          <TouchableWithoutFeedback key={index} onLongPress={() => copyToClipboard(part)}>
+          <TouchableWithoutFeedback
+            key={index}
+            onLongPress={() => copyToClipboard(part)}
+          >
             <View>
-              <Text style={{ color: "black"}}>
+              <Text
+                className={`${type === "user"
+          ? "text-primary": "text-black"}`}
+              >
                 {handleTextFormatting(removeNumbering(part))}
               </Text>
             </View>

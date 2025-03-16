@@ -15,7 +15,7 @@ const BalanceCard = () => {
       </View>
       <Entypo
         name="wallet"
-        size={110}
+        size={100}
         color="hsl(206, 100%, 70%)"
         className="self-center"
       />

@@ -22,9 +22,9 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   useAnimatedReaction(
     () => scrollY.value,
     (current) => {
-      if (current - prevScroll.value > 5) {
+      if (current - prevScroll.value > 50) {
         tabBarVisibility.value = 0;
-      } else if (prevScroll.value - current > 5) {
+      } else if (prevScroll.value - current > 50) {
         tabBarVisibility.value = 1;
       }
       prevScroll.value = current;
@@ -34,12 +34,13 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   const animatedTabBarStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: withTiming(tabBarVisibility.value === 1 ? 0 : 100, {
-          duration: 300,
+        translateY: withTiming(tabBarVisibility.value === 1 ? 0 : 200, {
+          duration: 500,
         }),
       },
     ],
   }));
+  
 
   return (
     <Animated.View style={[styles.container, animatedTabBarStyle]}>

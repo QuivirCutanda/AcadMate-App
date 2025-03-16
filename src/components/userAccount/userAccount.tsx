@@ -31,7 +31,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
 
   return (
     <TouchableOpacity
-      className="flex-row justify-between items-center py-4 border-b border-gray-200"
+      className="flex-row justify-between items-center py-4 "
       activeOpacity={0.7}
       onPress={() => {
         onPress?.();

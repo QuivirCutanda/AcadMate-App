@@ -56,7 +56,7 @@ const Account = () => {
   };
 
   return (
-    <View className="flex-1 items-center gap-4">
+    <View className="flex-1 items-center gap-4  bg-[#E0E0E0]">
       <View className="bg-secondary w-full p-8 rounded-b-3xl items-center gap-4">
         <Avatar
           size={80}

@@ -35,7 +35,7 @@ const CodeSyntaxFormatter: React.FC<CodeSyntaxFormatterProps> = ({ code }) => {
         onPress={() => copyToClipboard(formattedCode)} 
         className="rounded-xl self-end flex justify-center items-center p-2"
       >
-        <FontAwesome5 name="copy" size={24} color="#e0e0e0" />
+        <FontAwesome5 name="copy" size={18} color="#e0e0e0" />
       </TouchableOpacity>
 
       <Text className="text-[#dcdcaa] p-2 text-base">{formattedCode.trim()}</Text>
