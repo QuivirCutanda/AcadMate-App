@@ -4,37 +4,67 @@ import settingsData from "@/constant/data/settings.json";
 import Avatar from "@/src/components/Avatar";
 import SettingItem from "@/src/components/userAccount/userAccount";
 import { useRouter } from "expo-router";
-import { loadUserData } from "@/src/components/userAccount/utils/storage";
+import { getAllUsers } from "@/src/database/userQueries";
 
 const Account = () => {
   const [notifications, setNotifications] = useState(false);
   const router = useRouter();
+  const [currentDate, setCurrentDate] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0); 
   const [userData, setUserData] = useState({
-    firstName: "",
-    lastName: "",
+    firstname: "",
+    lastname: "",
     email: "",
-    profilePic: null as string | null,
+    profile_pic: null as string | null,
   });
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const storedData = await loadUserData();
-      setUserData((prev) => ({
-        ...prev,
-        ...storedData,
-      }));
+      try {
+        const users = await getAllUsers();
+        if (users && users.length > 0) {
+          setUserData({
+            firstname: users[0].firstname || "",
+            lastname: users[0].lastname || "",
+            email: users[0].email || "",
+            profile_pic: users[0].profilePic || null,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
     };
+
     fetchUserData();
-  }, [loadUserData()]);
+  }, [refreshKey]); 
+
+  useEffect(() => {
+    const updateDate = () => {
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+      setCurrentDate(formattedDate);
+    };
+
+    updateDate();
+    const interval = setInterval(updateDate, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleOnPress = (id: number) => {
     switch (id) {
       case 1:
         router.navigate("./updateProfile");
         console.log(1);
+        setRefreshKey((prev) => prev + 1);
         break;
       case 2:
         console.log(2);
+        setRefreshKey((prev) => prev + 1);
         break;
       case 3:
         setNotifications((prev) => {
@@ -56,20 +86,20 @@ const Account = () => {
   };
 
   return (
-    <View className="flex-1 items-center gap-4  bg-[#E0E0E0]">
+    <View className="flex-1 items-center gap-4 bg-[#E0E0E0]">
       <View className="bg-secondary w-full p-8 rounded-b-3xl items-center gap-4">
         <Avatar
           size={80}
           source={
-            userData.profilePic
-              ? { uri: userData.profilePic }
+            userData.profile_pic
+              ? { uri: userData.profile_pic }
               : require("@/assets/Avatar/user.png")
           }
         />
 
         <Text className="text-lg font-bold text-primary text-center">
-          {userData.firstName
-            ? userData.firstName + " " + userData.lastName
+          {userData.firstname
+            ? userData.firstname + " " + userData.lastname
             : "Hello, User"}
         </Text>
       </View>

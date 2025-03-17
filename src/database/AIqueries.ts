@@ -1,0 +1,49 @@
+import { db } from "./database";
+
+// Function to fetch all users
+export const getUsers = async () => {
+  try {
+    if (!db) throw new Error("Database connection is null");
+
+    const result = await db.getAllAsync("SELECT * FROM users");
+    return result;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return [];
+  }
+};
+
+// Function to insert a message
+export const insertMessage = async (userId: number, conversation: any) => {
+  try {
+    if (!db) throw new Error("Database connection is null");
+
+    const conversationString = JSON.stringify(conversation);
+    await db.runAsync("INSERT INTO messages (user_id, conversation) VALUES (?, ?)", [userId, conversationString]);
+    console.log("Message inserted successfully");
+  } catch (error) {
+    console.error("Error inserting message:", error);
+  }
+};
+
+// Function to get messages by user ID
+export const getMessagesByUser = async (userId: number) => {
+  try {
+    if (!db) throw new Error("Database connection is null");
+
+    const result = await db.getAllAsync("SELECT * FROM messages WHERE user_id = ?", [userId]);
+    return result.map(row => {
+      if (typeof row === 'object' && row !== null) {
+        return {
+          ...row,
+          conversation: JSON.parse((row as { conversation: string }).conversation),
+        };
+      } else {
+        throw new Error("Row is not an object");
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    return [];
+  }
+};

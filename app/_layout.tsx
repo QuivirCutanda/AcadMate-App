@@ -31,7 +31,6 @@ const StackLayout = () => {
         const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
 
         if (hasSeenOnboarding === null) {
-          await AsyncStorage.setItem("hasSeenOnboarding", "true");
           setIsFirstLaunch(true);
         } else {
           setIsFirstLaunch(false);
@@ -67,6 +66,7 @@ const StackLayout = () => {
     >
       <Stack.Screen name="(tabs-AI)" options={{ headerShown: false }} />
       <Stack.Screen name="onBoarding" options={{ headerShown: false }} />
+      <Stack.Screen name="createAccount" options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" />
     </Stack>
   );

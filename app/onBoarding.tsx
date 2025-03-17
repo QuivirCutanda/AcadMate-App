@@ -109,7 +109,7 @@ export default function OnBoarding() {
               ) : (
                 <TouchableOpacity
                   className="px-6 py-3 bg-secondary rounded-full ml-auto"
-                  onPress={() => router.replace("./(tabs)")}
+                  onPress={() => router.replace("/createAcount")}
                 >
                   <LottieView
                     autoPlay
