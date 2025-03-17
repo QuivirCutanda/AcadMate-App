@@ -46,7 +46,7 @@ const study = () => {
     <>
       <Header />
       <Animated.ScrollView
-        className="flex-1 p-4"
+        className="flex-1 p-4 bg-[#E0E0E0]"
         onScroll={scrollHandler}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}

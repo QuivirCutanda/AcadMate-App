@@ -37,8 +37,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress, fillColor, fillBack
       </View>
 
       <View className="flex-row justify-between items-center mt-1">
-        <Text className="text-base text-secondary font-normal">Progress</Text>
-        <Text className="text-base text-secondary font-normal">{progress}%</Text>
+        <Text className="text-xs text-secondary font-bold">Progress</Text>
+        <Text className="text-xs text-secondary font-bold">{progress}%</Text>
       </View>
     </View>
   );

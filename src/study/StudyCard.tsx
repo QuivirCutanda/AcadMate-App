@@ -23,6 +23,7 @@ const StudyCard: React.FC<StudyCardProps> = ({
   <TouchableOpacity
     className="flex-row items-center bg-secondary rounded-2xl p-4 gap-4"
     onPress={onPress}
+    activeOpacity={0.8}
   >
     <Icon name={iconName} size={iconSize} color={iconColor} />
     <View>

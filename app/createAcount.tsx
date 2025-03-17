@@ -1,51 +1,26 @@
-import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import ProfileForm from "@/src/components/userAccount/ProfileForm";
-import useHideTabBar from "@/src/hooks/useHideTabBar";
+import { insertUser } from "@/src/database/userQueries";
 import CustomModal from "@/src/components/CustomModal";
 import Sucess from "@/assets/animation/Successful.json";
-
-import { getAllUsers, updateUser } from "@/src/database/userQueries";
 import LottieView from "lottie-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const UpdateProfile = () => {
-  useHideTabBar();
+const createAcount = () => {
   const router = useRouter();
   const [userData, setUserData] = useState({
-    id: 0,
     firstName: "",
     lastName: "",
     email: "",
     profilePic: null as string | null,
   });
-
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const users = await getAllUsers();
-        if (users && users.length > 0) {
-          setUserData({
-            id: users[0].id || 0,
-            firstName: users[0].firstname || "",
-            lastName: users[0].lastname || "",
-            email: users[0].email || "",
-            profilePic: users[0].profilePic || null,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
+  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
 
   const saveProfile = async () => {
     if (!userData.firstName.trim() || !userData.lastName.trim()) {
@@ -56,7 +31,7 @@ const UpdateProfile = () => {
     setLoading(true);
 
     try {
-      const updated = await updateUser(userData.id, {
+      const userId = await insertUser({
         firstname: userData.firstName,
         lastname: userData.lastName,
         email: userData.email,
@@ -64,14 +39,14 @@ const UpdateProfile = () => {
         id: 0,
       });
 
-      if (updated) {
-        console.log("User updated successfully with ID:", userData.id);
+      if (userId) {
+        console.log("User saved successfully with ID:", userId);
         setModalVisible(true);
       } else {
-        console.error("Failed to update user.");
+        console.error("Failed to save user.");
       }
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error("Error saving user:", error);
     }
 
     setLoading(false);
@@ -98,13 +73,28 @@ const UpdateProfile = () => {
     }
   };
 
+  const checkFirstLaunch = async () => {
+    try {
+      const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
+      if (hasSeenOnboarding === null) {
+        await AsyncStorage.setItem("hasSeenOnboarding", "true");
+        setIsFirstLaunch(true);
+      } else {
+        setIsFirstLaunch(false);
+      }
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
+      setIsFirstLaunch(false);
+    }
+  };
+
   return (
-    <>
+    <View className="flex-1 bg-[#E0E0E0]">
       <CustomModal
         visible={modalVisible}
         onOk={() => {
           setModalVisible(false);
-          router.back();
+          router.replace("/(tabs)/(home)");
         }}
       >
         <LottieView
@@ -114,16 +104,13 @@ const UpdateProfile = () => {
           style={{ width: 250, height: 100 }}
         />
         <Text className="text-center text-green-500 text-lg font-bold">
-          Profile updated successfully!
+          Account created successfully!
         </Text>
       </CustomModal>
-
-      <View className="p-4 bg-secondary flex-row items-center gap-4">
-        <TouchableOpacity onPress={router.back} className="ml-2 flex-1">
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text className="text-primary text-lg font-bold">Update Profile</Text>
-        <View className="flex-1"></View>
+      <View className="bg-secondary p-4">
+        <Text className="text-primary text-lg font-bold text-center">
+          Create Account
+        </Text>
       </View>
 
       <ProfileForm
@@ -146,9 +133,9 @@ const UpdateProfile = () => {
         <TouchableOpacity
           onPress={async () => {
             await saveProfile();
-            setModalVisible(true);
+            await checkFirstLaunch();
           }}
-          className={`mt-4 mb-20 mx-4 px-6 py-3 rounded-lg flex flex-row justify-center items-center ${
+          className={`m-4 mx-4 px-6 py-3 rounded-lg flex flex-row justify-center items-center ${
             userData.firstName.trim() && userData.lastName.trim() && !loading
               ? "bg-accent"
               : "bg-gray-400"
@@ -164,8 +151,8 @@ const UpdateProfile = () => {
           )}
         </TouchableOpacity>
       </View>
-    </>
+    </View>
   );
 };
 
-export default UpdateProfile;
+export default createAcount;

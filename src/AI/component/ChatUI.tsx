@@ -51,7 +51,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
 
   console.log("response: ", messages);
   return (
-    <View className="flex-1 pt-1">
+    <View className="flex-1 pt-1 bg-[#E0E0E0]">
       <ScrollView
         ref={scrollViewRef}
         className="flex-1 mb-4"
