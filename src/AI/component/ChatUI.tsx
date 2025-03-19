@@ -36,19 +36,18 @@ const ChatUI: React.FC<ChatUIProps> = ({
     console.log("Clicked:", description);
   };
   useEffect(() => {
-    scrollViewRef.current?.scrollToEnd({ animated: true });
-  }, [messages, loading]);
-
-  useEffect(() => {
-    if (input == "" && prompActive) {
+    const hasMessages = Object.keys(messages).length > 0;
+    const isInputEmpty = input.trim() === "";
+    
+    if (isInputEmpty && prompActive && !hasMessages) {
       setIsHidden(false);
-      console.log("Input empty");
+      console.log(" Showing Suggested Prompts");
     } else {
-      console.log("Input not empty");
       setIsHidden(true);
+      console.log("Hiding Suggested Prompts");
     }
-  }, [input]);
-
+  }, [input, prompActive, messages]);
+  
   console.log("response: ", messages);
   return (
     <View className="flex-1 pt-1 bg-[#E0E0E0]">

@@ -14,7 +14,11 @@ module.exports = {
         secondary: "#005596",
         accent :"hsl(206, 100%, 70%)",
         light: "hsl(206, 100%, 90%)",
+        background:{
+          ligth:"#E0E0E0",
+        }
       },
+     
     },
   },
   plugins: [],

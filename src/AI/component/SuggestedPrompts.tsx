@@ -1,9 +1,10 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { MaterialIcons, AntDesign, FontAwesome5  } from "@expo/vector-icons";
+import { MaterialIcons, AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import suggestedPrompts from "@/constant/data/sudgestedPromps.json";
 import TemporaryChat from "./TemporaryChat";
+
 const iconMapping: Record<string, React.ComponentType<any>> = {
   summarize: MaterialIcons,
   "laptop-code": FontAwesome5,
@@ -17,11 +18,17 @@ interface SuggestedPromptsProps {
 }
 
 const SuggestedPrompts = ({ handlePress, IsHidden }: SuggestedPromptsProps) => {
-  if (IsHidden) return null;
+  const [isVisible, setIsVisible] = useState(!IsHidden);
+
+  useEffect(() => {
+    setIsVisible(!IsHidden);
+  }, [IsHidden]);
+
+  if (!isVisible) return null;
 
   return (
     <View className="flex-1 justify-center items-center mt-14 px-4">
-      <TemporaryChat/>
+      <TemporaryChat />
       <Text className="text-xl text-secondary font-bold mb-4">
         What can I help with?
       </Text>
@@ -38,9 +45,15 @@ const SuggestedPrompts = ({ handlePress, IsHidden }: SuggestedPromptsProps) => {
               <TouchableOpacity
                 className="flex-row items-center gap-2 rounded-3xl border border-secondary px-4 py-3"
                 activeOpacity={0.7}
-                onPress={() => handlePress(description)}
+                onPress={() => {
+                  console.log(`Clicked: ${title}`);
+                  handlePress(description);
+                  setIsVisible(false);
+                }}
               >
-                {IconComponent && <IconComponent name={iconName} size={24} color="#005596" />}
+                {IconComponent && (
+                  <IconComponent name={iconName} size={24} color="#005596" />
+                )}
                 <Text className="text-sm font-bold text-secondary">{title}</Text>
               </TouchableOpacity>
             </Animated.View>
