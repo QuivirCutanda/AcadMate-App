@@ -66,6 +66,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               outline: "#005596",
               text: "#005596",
               placeholder: "#005596",
+              onSurfaceVariant:"#005596",
               background: "#E0E0E0",
             },
           }}
@@ -82,6 +83,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               outline: "#005596",
               text: "#005596",
               placeholder: "#005596",
+              onSurfaceVariant:"#005596",
               background: "#E0E0E0",
             },
           }}
@@ -93,16 +95,20 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             label="Email"
             value={email}
             onChangeText={handleEmailChange}
+            placeholder="Enter your email"
+            style={{ color: isEmailValid ? "#005596" : "#D32F2F" }}
             theme={{
               colors: {
                 primary: isEmailValid ? "#005596" : "#D32F2F",
                 outline: isEmailValid ? "#005596" : "#D32F2F",
                 text: isEmailValid ? "#005596" : "#D32F2F",
                 placeholder: isEmailValid ? "#005596" : "#D32F2F",
+                onSurfaceVariant: isEmailValid ? "#005596" : "#D32F2F",
                 background: "#E0E0E0",
               },
             }}
           />
+
           {!isEmailValid && (
             <Text className="text-red-500 text-start  text-xs">
               *Please enter a valid email address.
