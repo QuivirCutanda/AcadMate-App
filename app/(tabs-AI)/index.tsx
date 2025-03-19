@@ -8,14 +8,27 @@ import { View, Text, ScrollView, Image } from "react-native";
 import CustomModal from "@/src/components/CustomModal";
 import useInternetStatus from "@/src/hooks/useInternetStatus";
 import { chatHistorySample } from "@/constant/chatHistorySample.json";
-import LottieView from "lottie-react-native";
+
+interface Message {
+  text: string;
+  type: "user" | "ai";
+}
+
+interface MessagesState {
+  [key: string]: Message;
+}
 
 export default function ChatScreen() {
   const router = useRouter();
   const isConnected = useInternetStatus();
   const [open, setOpen] = useState(false);
-  const [clearChat, setClearChat] = useState<() => void>(() => () => {});
   const [visible, setVisible] = useState(false);
+  const [messages, setMessages] = useState<MessagesState>({});
+
+  const handleClearChat = () => {
+    setMessages({});
+  };
+
 
   useEffect(() => {
     if (isConnected==true) {
@@ -36,15 +49,15 @@ export default function ChatScreen() {
             <Text className="text-lg font-bold text-primary">AcadMate AI</Text>
           </View>
           <Text className="text-base font-bold text-secondary border-b border-secondary m-4">
-            Chats
+            Chats History
           </Text>
           <ScrollView
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
           >
-            {/* {chatHistorySample.map((history: any, index: number) => (
+            {chatHistorySample.map((history: any, index: number) => (
               <ChatHistory title={history} key={index}/>
-            ))} */}
+            ))}
             <Text className="text-center text-secondary font-normal">
               No data available
             </Text>
@@ -56,7 +69,7 @@ export default function ChatScreen() {
         onPress={() => router.back()}
         onPressEdit={() => {
           console.log("Press edit");
-          clearChat();
+          handleClearChat();
         }}
         onPressMenu={() => setOpen(true)}
       />
@@ -78,7 +91,10 @@ export default function ChatScreen() {
           </View>
         <Text className="text-lg text-red-500 font-bold">No Internet</Text>
       </CustomModal>
-      <ChatComponent onClearChat={setClearChat} />
+      <ChatComponent 
+      messages={messages}
+      setMessages={setMessages}
+     />
     </Drawer>
   );
 }
