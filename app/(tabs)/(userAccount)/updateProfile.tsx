@@ -8,7 +8,6 @@ import ProfileForm from "@/src/components/userAccount/ProfileForm";
 import useHideTabBar from "@/src/hooks/useHideTabBar";
 import CustomModal from "@/src/components/CustomModal";
 import Sucess from "@/assets/animation/Successful.json";
-
 import { getAllUsers, updateUser } from "@/src/database/userQueries";
 import LottieView from "lottie-react-native";
 
@@ -25,6 +24,7 @@ const UpdateProfile = () => {
 
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -46,6 +46,12 @@ const UpdateProfile = () => {
 
     fetchUserData();
   }, []);
+
+  const validateEmail = (email: string) => {
+    if (!email) return true; // Email is optional, so it's valid if empty
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const saveProfile = async () => {
     if (!userData.firstName.trim() || !userData.lastName.trim()) {
@@ -137,7 +143,10 @@ const UpdateProfile = () => {
         setLastName={(val) =>
           setUserData((prev) => ({ ...prev, lastName: val }))
         }
-        setEmail={(val) => setUserData((prev) => ({ ...prev, email: val }))}
+        setEmail={(val) => {
+          setUserData((prev) => ({ ...prev, email: val }));
+          setIsEmailValid(validateEmail(val));
+        }}
         pickImage={pickImage}
       />
 
@@ -149,12 +158,18 @@ const UpdateProfile = () => {
             setModalVisible(true);
           }}
           className={`mt-4 mb-20 mx-4 px-6 py-3 rounded-lg flex flex-row justify-center items-center ${
-            userData.firstName.trim() && userData.lastName.trim() && !loading
+            userData.firstName.trim() &&
+            userData.lastName.trim() &&
+            isEmailValid &&
+            !loading
               ? "bg-accent"
               : "bg-gray-400"
           }`}
           disabled={
-            !userData.firstName.trim() || !userData.lastName.trim() || loading
+            !userData.firstName.trim() ||
+            !userData.lastName.trim() ||
+            !isEmailValid ||
+            loading
           }
         >
           {loading ? (

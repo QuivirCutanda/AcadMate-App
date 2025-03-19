@@ -1,12 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View,Text,ScrollView,Image,TouchableOpacity,ActivityIndicator } from "react-native";
 import { Drawer } from "react-native-drawer-layout";
 import { useRouter } from "expo-router";
 
@@ -160,7 +153,7 @@ export default function ChatScreen() {
       )}
     >
       <Header
-        onPress={() => router.back()}
+        onPress={() =>handleBackPress()}
         onPressEdit={handleClearChat}
         onPressMenu={() => setOpen(true)}
       />
@@ -181,7 +174,7 @@ export default function ChatScreen() {
             style={{ width: 90, height: 90 }}
           />
         </View>
-        <Text className="text-lg text-red-500 font-bold">No Internet</Text>
+        <Text className="text-lg text-red-500 font-bold">No Internet connection!</Text>
       </CustomModal>
       <ChatComponent messages={messages} setMessages={setMessages} />
     </Drawer>

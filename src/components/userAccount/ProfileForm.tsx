@@ -1,5 +1,5 @@
-import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, TouchableOpacity, Text } from "react-native";
 import { TextInput, Avatar } from "react-native-paper";
 import { Entypo } from "@expo/vector-icons";
 
@@ -24,8 +24,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   setEmail,
   pickImage,
 }) => {
+  const [isEmailValid, setIsEmailValid] = useState(true);
+
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setIsEmailValid(text === "" || emailPattern.test(text));
+  };
+
   return (
-    <View className="flex-col gap-4  bg-[#E0E0E0]">
+    <View className="flex-col gap-4 bg-[#E0E0E0]">
       <View className="bg-secondary pb-8 rounded-b-3xl">
         <TouchableOpacity
           onPress={pickImage}
@@ -78,22 +86,29 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             },
           }}
         />
-        <TextInput
-          textColor="#005596"
-          mode="outlined"
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          theme={{
-            colors: {
-              primary: "#005596",
-              outline: "#005596",
-              text: "#005596",
-              placeholder: "#005596",
-              background: "#E0E0E0",
-            },
-          }}
-        />
+        <View>
+          <TextInput
+            textColor={isEmailValid ? "#005596" : "#D32F2F"}
+            mode="outlined"
+            label="Email"
+            value={email}
+            onChangeText={handleEmailChange}
+            theme={{
+              colors: {
+                primary: isEmailValid ? "#005596" : "#D32F2F",
+                outline: isEmailValid ? "#005596" : "#D32F2F",
+                text: isEmailValid ? "#005596" : "#D32F2F",
+                placeholder: isEmailValid ? "#005596" : "#D32F2F",
+                background: "#E0E0E0",
+              },
+            }}
+          />
+          {!isEmailValid && (
+            <Text className="text-red-500 text-start  text-xs">
+              *Please enter a valid email address.
+            </Text>
+          )}
+        </View>
       </View>
     </View>
   );

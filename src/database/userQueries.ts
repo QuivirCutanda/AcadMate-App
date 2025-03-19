@@ -1,4 +1,5 @@
 import { db } from "./database";
+import { EventEmitter } from "events";
 
 interface User {
   id: number;
@@ -7,6 +8,8 @@ interface User {
   email: string;
   profilePic: string;
 }
+
+const dbEventEmitter = new EventEmitter();
 
 export const insertUser = async (user: User): Promise<number | null> => {
   try {
@@ -18,29 +21,15 @@ export const insertUser = async (user: User): Promise<number | null> => {
     );
 
     console.log(`User inserted successfully with ID: ${result.lastInsertRowId}`);
+    
+    dbEventEmitter.emit("usersUpdated");
+
     return result.lastInsertRowId ?? null;
   } catch (error) {
     console.error("Error inserting user:", error);
     return null;
   }
 };
-
-
-
-// Example usage
-// (async () => {
-//   try {
-//     const userId = await insertUser({
-//       firstname: "John",
-//       lastname: "Doe",
-//       email: "john.doe@example.com",
-//       profilePic: "path/to/profile_pic.jpg",
-//     });
-//     console.log(`Inserted user ID: ${userId}`);
-//   } catch (error) {
-//     console.error("Insertion failed:", error);
-//   }
-// })();
 
 export const updateUser = async (userId: number, user: User): Promise<boolean> => {
   try {
@@ -52,13 +41,15 @@ export const updateUser = async (userId: number, user: User): Promise<boolean> =
     );
 
     console.log(`User updated successfully with ID: ${userId}`);
+
+    dbEventEmitter.emit("usersUpdated");
+
     return result.changes > 0;
   } catch (error) {
     console.error("Error updating user:", error);
     return false;
   }
 };
-
 
 
 export const getAllUsers = async (): Promise<User[] | null> => {
@@ -68,7 +59,7 @@ export const getAllUsers = async (): Promise<User[] | null> => {
     const results = await db.getAllAsync("SELECT * FROM users");
 
     return results.map((row: any) => ({
-      id: row.id, 
+      id: row.id,
       firstname: row.firstname,
       lastname: row.lastname,
       email: row.email,
@@ -80,14 +71,11 @@ export const getAllUsers = async (): Promise<User[] | null> => {
   }
 };
 
-  
-//   // Example usage
-//   (async () => {
-//     try {
-//       const users = await getAllUsers();
-//       console.log("All Users:", users);
-//     } catch (error) {
-//       console.error("Failed to fetch users:", error);
-//     }
-//   })();
-  
+
+export const subscribeToUserUpdates = (callback: () => void) => {
+  dbEventEmitter.on("usersUpdated", callback);
+
+  return () => {
+    dbEventEmitter.off("usersUpdated", callback);
+  };
+};

@@ -21,6 +21,16 @@ const createAcount = () => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
+  const [isEmailValid, setIsEmailValid] = useState(true);
+
+  const validateEmail = (email: string) => {
+    if (!email) {
+      setIsEmailValid(true); // Email is optional, so empty is valid
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setIsEmailValid(emailRegex.test(email));
+  };
 
   const saveProfile = async () => {
     if (!userData.firstName.trim() || !userData.lastName.trim()) {
@@ -107,6 +117,7 @@ const createAcount = () => {
           Account created successfully!
         </Text>
       </CustomModal>
+
       <View className="bg-secondary p-4">
         <Text className="text-primary text-lg font-bold text-center">
           Create Account
@@ -124,7 +135,10 @@ const createAcount = () => {
         setLastName={(val) =>
           setUserData((prev) => ({ ...prev, lastName: val }))
         }
-        setEmail={(val) => setUserData((prev) => ({ ...prev, email: val }))}
+        setEmail={(val) => {
+          setUserData((prev) => ({ ...prev, email: val }));
+          validateEmail(val);
+        }}
         pickImage={pickImage}
       />
 
@@ -136,12 +150,18 @@ const createAcount = () => {
             await checkFirstLaunch();
           }}
           className={`m-4 mx-4 px-6 py-3 rounded-lg flex flex-row justify-center items-center ${
-            userData.firstName.trim() && userData.lastName.trim() && !loading
+            userData.firstName.trim() &&
+            userData.lastName.trim() &&
+            isEmailValid &&
+            !loading
               ? "bg-accent"
               : "bg-gray-400"
           }`}
           disabled={
-            !userData.firstName.trim() || !userData.lastName.trim() || loading
+            !userData.firstName.trim() ||
+            !userData.lastName.trim() ||
+            !isEmailValid ||
+            loading
           }
         >
           {loading ? (

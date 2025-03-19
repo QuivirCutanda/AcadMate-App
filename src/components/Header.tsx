@@ -3,12 +3,14 @@ import React, { useState, useEffect } from "react";
 import Avatar from "@/src/components/Avatar";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { getAllUsers } from "@/src/database/userQueries";
+import {
+  getAllUsers,
+  subscribeToUserUpdates,
+} from "@/src/database/userQueries";
 
 const Header = () => {
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState("");
-  const [refreshKey, setRefreshKey] = useState(0); 
   const [userData, setUserData] = useState({
     firstname: "",
     lastname: "",
@@ -16,28 +18,33 @@ const Header = () => {
     profile_pic: null as string | null,
   });
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const users = await getAllUsers();
-        if (users && users.length > 0) {
-          setUserData({
-            firstname: users[0].firstname || "",
-            lastname: users[0].lastname || "",
-            email: users[0].email || "",
-            profile_pic: users[0].profilePic || null,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+  const fetchUserData = async () => {
+    try {
+      const users = await getAllUsers();
+      if (users && users.length > 0) {
+        setUserData({
+          firstname: users[0].firstname || "",
+          lastname: users[0].lastname || "",
+          email: users[0].email || "",
+          profile_pic: users[0].profilePic || null,
+        });
       }
-    };
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchUserData();
-  }, [refreshKey]); // 🔹 Re-fetch when refreshKey changes
+    const unsubscribe = subscribeToUserUpdates(() => {
+      console.log("Refreshing...");
+      fetchUserData();
+    });
 
-  // Function to trigger a refresh
-  const refreshUserData = () => setRefreshKey((prev) => prev + 1);
+    return () => {
+      unsubscribe(); 
+    };
+  }, []);
 
   useEffect(() => {
     const updateDate = () => {
@@ -62,7 +69,6 @@ const Header = () => {
         activeOpacity={0.7}
         onPress={() => {
           router.navigate("/(tabs)/(userAccount)");
-          refreshUserData(); 
         }}
       >
         <Avatar
