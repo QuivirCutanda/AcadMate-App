@@ -1,17 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { Drawer } from "react-native-drawer-layout";
 import { useRouter } from "expo-router";
+
 import Header from "@/src/AI/component/AIHeader";
 import ChatComponent from "@/src/AI/component/ChatComponent";
 import ChatHistory from "@/src/AI/component/DrawerComponent";
-import { View, Text, ScrollView, Image } from "react-native";
 import CustomModal from "@/src/components/CustomModal";
+
+import useBackHandler from "@/src/hooks/useBackHandler";
 import useInternetStatus from "@/src/hooks/useInternetStatus";
-import { chatHistorySample } from "@/constant/chatHistorySample.json";
+
+import { insertMessage, getMessagesByUser } from "@/src/database/AIqueries";
 
 interface Message {
   text: string;
   type: "user" | "ai";
+}
+
+interface ChatData {
+  id: number;
+  user_id: number;
+  timestamp: string;
+  conversation: MessagesState;
 }
 
 interface MessagesState {
@@ -23,20 +41,81 @@ export default function ChatScreen() {
   const isConnected = useInternetStatus();
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState<MessagesState>({});
-
-  const handleClearChat = () => {
-    setMessages({});
-  };
-
+  const [history, setHistory] = useState<ChatData[]>([]);
 
   useEffect(() => {
-    if (isConnected==true) {
-      setVisible(false);
-    } else if(isConnected==false) {
-      setVisible(true);
-    }
+    setVisible(!isConnected);
   }, [isConnected]);
+
+  const handleBackPress = () => {
+    if (Object.keys(messages).length > 0) {
+      insertMessage(1, messages)
+        .then(() => console.log("Message inserted successfully"))
+        .catch((err) => console.error("Error inserting message:", err));
+      router.back();
+    } else {
+      console.log("No messages to save");
+      router.back();
+    }
+    return true;
+  };
+
+  useBackHandler(handleBackPress);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      setLoading(true);
+      try {
+        const chatHistory = await getMessagesByUser(1);
+        setHistory(chatHistory);
+      } catch (error) {
+        console.error("Error fetching chat history:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHistory();
+  }, []);
+
+  const handleClearChat = async () => {
+    await insertMessage(1, messages);
+    setMessages({});
+    const chatHistory = await getMessagesByUser(1);
+    setHistory(chatHistory);
+    console.log("Chat cleared and saved.");
+  };
+
+  const sortConversation = (conversation: MessagesState) =>
+    Object.entries(conversation)
+      .sort(
+        ([a], [b]) =>
+          parseInt(a.replace("msg-", ""), 10) -
+          parseInt(b.replace("msg-", ""), 10)
+      )
+      .map(([, message]) => message);
+
+  const getHistory = useCallback(
+    (index: number) => {
+      setOpen(false);
+      if (!history[index]) {
+        console.error("Invalid index: Conversation not found.");
+        return [];
+      }
+      const sortedConversation = sortConversation(history[index].conversation);
+      setMessages(
+        Object.fromEntries(
+          sortedConversation.map((msg, i) => [`msg-${i + 1}`, msg])
+        )
+      );
+      return sortedConversation;
+    },
+    [history]
+  );
+
+  const getFirstAIResponse = (conversation: MessagesState) =>
+    sortConversation(conversation).find((msg) => msg.type === "ai");
 
   return (
     <Drawer
@@ -44,57 +123,67 @@ export default function ChatScreen() {
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
       renderDrawerContent={() => (
-        <View className="flex-1">
+        <View className="flex-1 bg-[#E0E0E0]">
           <View className="bg-secondary p-4 rounded-b-2xl justify-center items-center">
             <Text className="text-lg font-bold text-primary">AcadMate AI</Text>
           </View>
           <Text className="text-base font-bold text-secondary border-b border-secondary m-4">
-            Chats History
+            Chats
           </Text>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-          >
-            {chatHistorySample.map((history: any, index: number) => (
-              <ChatHistory title={history} key={index}/>
-            ))}
-            <Text className="text-center text-secondary font-normal">
-              No data available
-            </Text>
-          </ScrollView>
+          {loading ? (
+            <View className="flex-1 justify-center items-center">
+              <ActivityIndicator size="large" color="#005596" />
+            </View>
+          ) : history.length === 0 ? (
+            <View className="flex-1 justify-start items-center">
+              <Text className="text-lg font-semibold text-secondary">
+                No History
+              </Text>
+            </View>
+          ) : (
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {history.map((item, index) => {
+                const firstAIMessage = getFirstAIResponse(item.conversation);
+                return firstAIMessage ? (
+                  <TouchableOpacity
+                    key={index}
+                    activeOpacity={0.5}
+                    onPress={() => getHistory(index)}
+                  >
+                    <ChatHistory title={firstAIMessage.text} />
+                  </TouchableOpacity>
+                ) : null;
+              })}
+            </ScrollView>
+          )}
         </View>
       )}
     >
       <Header
         onPress={() => router.back()}
-        onPressEdit={() => {
-          console.log("Press edit");
-          handleClearChat();
-        }}
+        onPressEdit={handleClearChat}
         onPressMenu={() => setOpen(true)}
       />
       <CustomModal
+        visible={visible}
         onOk={() => {
           setVisible(false);
-            router.back();
-          }}
-          onCancel={()=>{
-            setVisible(false);
-          }}
-          visible={visible}
-          >
-          <View className="px-20">
+          router.back();
+        }}
+        onCancel={() => {
+          setVisible(false);
+          router.back();
+        }}
+      >
+        <View className="px-20">
           <Image
             source={require("@/assets/images/no-internet.png")}
             style={{ width: 90, height: 90 }}
           />
-          </View>
+        </View>
         <Text className="text-lg text-red-500 font-bold">No Internet</Text>
       </CustomModal>
-      <ChatComponent 
-      messages={messages}
-      setMessages={setMessages}
-     />
+      <ChatComponent messages={messages} setMessages={setMessages} />
     </Drawer>
   );
 }

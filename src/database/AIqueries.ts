@@ -31,12 +31,22 @@ export const getMessagesByUser = async (userId: number) => {
   try {
     if (!db) throw new Error("Database connection is null");
 
-    const result = await db.getAllAsync("SELECT * FROM messages WHERE user_id = ?", [userId]);
-    return result.map(row => {
-      if (typeof row === 'object' && row !== null) {
+    const result = await db.getAllAsync("SELECT * FROM messages WHERE user_id = ?", [userId]) as MessageRow[];
+
+    interface MessageRow {
+      id: number;
+      user_id: number;
+      timestamp: string;
+      conversation: string;
+    }
+
+    return result.map((row: MessageRow) => {
+      if (typeof row === "object" && row !== null) {
         return {
-          ...row,
-          conversation: JSON.parse((row as { conversation: string }).conversation),
+          id: row.id,
+          user_id: row.user_id,
+          timestamp: row.timestamp,
+          conversation: JSON.parse(row.conversation),
         };
       } else {
         throw new Error("Row is not an object");
@@ -47,3 +57,4 @@ export const getMessagesByUser = async (userId: number) => {
     return [];
   }
 };
+

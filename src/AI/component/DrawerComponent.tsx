@@ -7,7 +7,6 @@ interface ChatHistoryProps {
 }
 export default function ChatHistory({ title }: ChatHistoryProps) {
   return (
-    <TouchableOpacity>
       <Text
         className="text-base font-semibold p-4 text-secondary"
         numberOfLines={1}
@@ -15,6 +14,5 @@ export default function ChatHistory({ title }: ChatHistoryProps) {
       >
         {title}
       </Text>
-    </TouchableOpacity>
   );
 }
