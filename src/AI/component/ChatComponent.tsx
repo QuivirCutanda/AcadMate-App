@@ -12,15 +12,11 @@ interface MessagesState {
 }
 
 const ChatComponent: React.FC<{
-  onClearChat: (clearFn: () => void) => void;
-}> = ({ onClearChat }) => {
+  messages: MessagesState;
+  setMessages: React.Dispatch<React.SetStateAction<MessagesState>>;
+}> = ({ messages, setMessages }) => {
   const [input, setInput] = useState<string>("");
-  const [messages, setMessages] = useState<MessagesState>({});
   const [loading, setLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    onClearChat(() => () => setMessages({}));
-  }, [onClearChat]);
 
   const generateMessageId = () => `msg-${Date.now()}`;
 
@@ -50,7 +46,7 @@ const ChatComponent: React.FC<{
     <ChatUI
       input={input}
       setInput={setInput}
-      messages={Object.values(messages)} 
+      messages={Object.values(messages)}
       handleSend={handleSend}
       loading={loading}
     />
