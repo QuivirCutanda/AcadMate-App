@@ -11,6 +11,7 @@ export default function TabLayout() {
         tabBar={(props) => <TabBar {...props} />}
       >
         <Tabs.Screen name="index" options={{ title: "Study" }} />
+        <Tabs.Screen name="(flashcard)" options={{ title: "Flashcard" }} />
       </Tabs>
     </ScrollProvider>
   );

@@ -120,7 +120,7 @@ export default function OnBoarding() {
                       position: "absolute",
                     }}
                   />
-                  <Text className="text-white font-bold text-base">Done</Text>
+                  <Text className="text-white font-bold text-base">Get Started</Text>
                 </TouchableOpacity>
               )}
             </View>
