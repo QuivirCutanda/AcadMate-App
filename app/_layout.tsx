@@ -17,7 +17,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setupDatabase } from "@/src/database/database";
 import "../global.css";
-import { Provider as PaperProvider } from "react-native-paper"; 
+import { Provider as PaperProvider } from "react-native-paper";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,7 +28,9 @@ const StackLayout = () => {
   useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
-        const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
+        const hasSeenOnboarding = await AsyncStorage.getItem(
+          "hasSeenOnboarding"
+        );
 
         if (hasSeenOnboarding === null) {
           setIsFirstLaunch(true);
@@ -52,7 +54,7 @@ const StackLayout = () => {
   }, [isFirstLaunch]);
 
   if (isFirstLaunch === null) {
-    return null; 
+    return null;
   }
 
   return (
@@ -65,6 +67,7 @@ const StackLayout = () => {
       }}
     >
       <Stack.Screen name="(tabs-AI)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="onBoarding" options={{ headerShown: false }} />
       <Stack.Screen name="createAccount" options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" />
@@ -92,10 +95,15 @@ export default function RootLayout() {
     <>
       <StatusBar style="light" backgroundColor="#005596" />
       <SafeAreaProvider>
-        <SafeAreaView style={styles.safeContainer} edges={["top", "left", "right"]}>
+        <SafeAreaView
+          style={styles.safeContainer}
+          edges={["top", "left", "right"]}
+        >
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <PaperProvider> 
-              <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+            <PaperProvider>
+              <ThemeProvider
+                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+              >
                 <StackLayout />
               </ThemeProvider>
             </PaperProvider>
@@ -112,4 +120,3 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 });
-

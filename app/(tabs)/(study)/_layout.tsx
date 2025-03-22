@@ -7,11 +7,10 @@ export default function TabLayout() {
   return (
     <ScrollProvider>
       <Tabs
-        screenOptions={{ headerShown: false }}
-        tabBar={(props) => <TabBar {...props} />}
+        screenOptions={{ headerShown: false , tabBarStyle: { display: "none" }}}
       >
         <Tabs.Screen name="index" options={{ title: "Study" }} />
-        <Tabs.Screen name="(flashcard)" options={{ title: "Flashcard" }} />
+        <Tabs.Screen name="(flashcard)" options={{ title: "Flashcard" , tabBarStyle: { display: "none" }}} />
       </Tabs>
     </ScrollProvider>
   );

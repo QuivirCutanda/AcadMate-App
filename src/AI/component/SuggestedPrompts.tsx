@@ -28,7 +28,7 @@ const SuggestedPrompts = ({ handlePress, IsHidden }: SuggestedPromptsProps) => {
 
   return (
     <View className="flex-1 justify-center items-center mt-14 px-4">
-      <TemporaryChat />
+      {/* <TemporaryChat /> */}
       <Text className="text-xl text-secondary font-bold mb-4">
         What can I help with?
       </Text>
