@@ -126,7 +126,7 @@ const UpdateProfile = () => {
 
       <View className="p-4 bg-secondary flex-row items-center gap-4">
         <TouchableOpacity onPress={router.back} className="ml-2 flex-1">
-          <Ionicons name="arrow-back" size={24} color="white" />
+          <Ionicons name="chevron-back" size={24} color="white" />
         </TouchableOpacity>
         <Text className="text-primary text-lg font-bold">Update Profile</Text>
         <View className="flex-1"></View>

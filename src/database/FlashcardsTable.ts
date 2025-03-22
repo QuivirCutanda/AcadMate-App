@@ -1,13 +1,13 @@
 import * as SQLite from "expo-sqlite";
-
+import { db } from "./database";
 export const FlashcardTable = async () => {
   try {
-    const db = await SQLite.openDatabaseAsync("AcadMate.db");
+    if (!db) throw new Error("Database connection is null");
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS decks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
-        name TEXT NOT NULL,
+        title TEXT NOT NULL,
         description TEXT,
         is_important BOOLEAN DEFAULT 0, -- 1 = Important, 0 = Normal
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -54,12 +54,3 @@ export const FlashcardTable = async () => {
   }
 };
 
-export let db: SQLite.SQLiteDatabase | null = null;
-
-FlashcardTable().then((database) => {
-  if (database) {
-    db = database;
-  } else {
-    console.error("Failed to initialize database");
-  }
-});
