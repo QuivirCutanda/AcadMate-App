@@ -157,7 +157,7 @@ const UpdateProfile = () => {
             await saveProfile();
             setModalVisible(true);
           }}
-          className={`mt-4 mb-20 mx-4 px-6 py-3 rounded-lg flex flex-row justify-center items-center ${
+          className={`m-4 p-4 rounded-lg flex flex-row justify-center items-center ${
             userData.firstName.trim() &&
             userData.lastName.trim() &&
             isEmailValid &&

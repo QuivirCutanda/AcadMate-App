@@ -34,7 +34,6 @@ CREATE TABLE IF NOT EXISTS users (
   }
 };
 
-// Export database instance
 export let db: SQLite.SQLiteDatabase | null = null;
 setupDatabase().then((database) => {
   if (database) {

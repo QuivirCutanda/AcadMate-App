@@ -1,12 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import TabBarButton from "./TabBarButton";
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-  useAnimatedReaction,
-  useSharedValue,
-} from "react-native-reanimated";
-import { useScroll } from "@/components/ScrollContext";
+
 
 type TabBarProps = {
   state: any;
@@ -15,40 +9,14 @@ type TabBarProps = {
 };
 
 const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
-  const { scrollY } = useScroll();
-  const tabBarVisibility = useSharedValue(1);
-  const prevScroll = useSharedValue(0);
-
-  useAnimatedReaction(
-    () => scrollY.value,
-    (current) => {
-      if (current - prevScroll.value > 50) {
-        tabBarVisibility.value = 0;
-      } else if (prevScroll.value - current > 50) {
-        tabBarVisibility.value = 1;
-      }
-      prevScroll.value = current;
-    }
-  );
-
-  const animatedTabBarStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY: withTiming(tabBarVisibility.value === 1 ? 0 : 200, {
-          duration: 500,
-        }),
-      },
-    ],
-  }));
-  
-
   return (
-    <Animated.View style={[styles.container, animatedTabBarStyle]}>
+    <View style={styles.container}>
       {state.routes.map(
         ({ key, name }: { key: string; name: string }, index: number) => {
           const { options } = descriptors[key] || {};
           const label = options?.tabBarLabel ?? options?.title ?? name;
           const isFocused = state.index === index;
+
           const onPress = () => {
             const event = navigation.emit({
               type: "tabPress",
@@ -57,24 +25,23 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
             });
             if (!isFocused && !event.defaultPrevented) {
               navigation.navigate(name);
-              // console.log("Route Name: "+name);
             }
           };
 
           return (
-              <TabBarButton
-                key={key}
-                isFocused={isFocused}
-                label={label}
-                routeName={name as "(home)" | "(study)" | "(finance)" | "(userAccount)"}
-                color={isFocused ? "#005595" : "#666"}
-                onPress={onPress}
-                onLongPress={() => {}}
-              />
+            <TabBarButton
+              key={key}
+              isFocused={isFocused}
+              label={label}
+              routeName={name as "(home)" | "(study)" | "(finance)" | "(userAccount)"}
+              color={isFocused ? "#005595" : "#655"}
+              onPress={onPress}
+              onLongPress={() => {}}
+            />
           );
         }
       )}
-    </Animated.View>
+    </View>
   );
 };
 
