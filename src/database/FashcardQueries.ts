@@ -32,6 +32,21 @@ export const insertDeck = async (deck: Deck): Promise<number | null> => {
   }
 };
 
+  // const addNewDeck = async () => {
+  //   const newDeck = {
+  //     userId: 1, 
+  //     title: "Math Flashcards",
+  //     description: "Basic math formulas and equations",
+  //     isImportant: true,
+  //   };
+
+  //   const deckId = await insertDeck(newDeck);
+  //   console.log("Inserted deck ID:", deckId);
+  // };
+
+  // addNewDeck();
+
+  
 //update Deck
 export const updateDeck = async (deckId: number, deck: Deck): Promise<boolean> => {
   try {
@@ -66,6 +81,7 @@ export const getAllDecks = async (): Promise<Deck[] | null> => {
       title: row.title,
       description: row.description,
       isImportant: row.is_important === 1,
+      created_at: row.created_at,
     }));
   } catch (error) {
     console.error("Error fetching decks:", error);
@@ -74,7 +90,6 @@ export const getAllDecks = async (): Promise<Deck[] | null> => {
 };
 
 //Delete Deck
-// Delete Deck
 export const deleteDeck = async (deckId: number): Promise<boolean> => {
     try {
       if (!db) throw new Error("Database connection is null");

@@ -1,11 +1,13 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import LottieView from "lottie-react-native";
 import AppIntroSlider from "react-native-app-intro-slider";
 import { useRouter } from "expo-router";
 import NextArrow from "@/assets/animation/next-arrow.json";
 import Celebration from "@/assets/animation/celebration.json";
 import { StatusBar } from "expo-status-bar";
+import { setupDatabase } from "@/src/database/database";
+import { FlashcardTable } from "@/src/database/FlashcardsTable";
 
 const slides = [
   {
@@ -32,6 +34,14 @@ const slides = [
 ];
 
 export default function OnBoarding() {
+  useEffect(() => {
+    const initializeDatabase = async () => {
+      await setupDatabase();
+      await FlashcardTable();
+    };
+    initializeDatabase();
+  }, [])
+  
   const router = useRouter();
   const sliderRef = useRef<AppIntroSlider | null>(null);
 

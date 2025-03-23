@@ -10,7 +10,7 @@ export default function TabLayout() {
         screenOptions={{ headerShown: false , tabBarStyle: { display: "none" }}}
       >
         <Tabs.Screen name="index" options={{ title: "Study" }} />
-        <Tabs.Screen name="(flashcard)" options={{ title: "Flashcard" , tabBarStyle: { display: "none" }}} />
+        <Tabs.Screen name="(flashcard)" options={{ title: "Flashcard"}} />
       </Tabs>
     </ScrollProvider>
   );

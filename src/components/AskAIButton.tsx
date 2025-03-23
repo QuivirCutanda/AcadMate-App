@@ -43,7 +43,7 @@ const AskAIButton = ({ onPress }:AskAIButtonProps) => {
   }));
 
   return (
-    <TouchableOpacity onPress={onPress} className="absolute bottom-20 right-5">
+    <TouchableOpacity activeOpacity={0.7} onPress={onPress} className="absolute bottom-20 right-5">
       <Animated.View
         style={[animatedStyle]}
         className=" bg-primary shadow-lg shadow-secondary"
