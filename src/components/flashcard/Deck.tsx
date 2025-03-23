@@ -11,6 +11,7 @@ interface DeckProps {
   editDeck: () => void;
   title: string;
   description?: string;
+  totalCards: number;
   addCard: () => void;
   practice: () => void;
 }
@@ -19,6 +20,7 @@ const Deck = ({
   onPress,
   title,
   description,
+  totalCards,
   addCard,
   practice,
   deleteDeck,
@@ -46,7 +48,7 @@ const Deck = ({
         <Text className="text-base font-normal text-secondary">
           {description}
         </Text>
-        <Text className="text-sm font-bold text-gray-400">100 Cards</Text>
+        <Text className="text-sm font-bold text-gray-400">{totalCards} Cards</Text>
 
         {/* Buttons */}
         <View className="flex-row justify-between items-center mt-4">

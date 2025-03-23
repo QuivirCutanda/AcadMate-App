@@ -9,6 +9,10 @@ interface Deck {
   isImportant: boolean;
 }
 
+interface DeckWithTotalCards extends Deck {
+  totalCards: number;
+}
+
 const dbEventEmitter = new EventEmitter();
 
 //insert Deck
@@ -68,12 +72,12 @@ export const updateDeck = async (deckId: number, deck: Deck): Promise<boolean> =
   }
 };
 
-//get All Deck
-export const getAllDecks = async (): Promise<Deck[] | null> => {
+//get Deck by ID
+export const getDeckID = async (deckId:number): Promise<Deck[] | null> => {
   try {
     if (!db) throw new Error("Database connection is null");
 
-    const results = await db.getAllAsync("SELECT * FROM decks");
+    const results = await db.getAllAsync("SELECT * FROM decks WHERE id = ?",[deckId]);
 
     return results.map((row: any) => ({
       id: row.id,
@@ -83,6 +87,43 @@ export const getAllDecks = async (): Promise<Deck[] | null> => {
       isImportant: row.is_important === 1,
       created_at: row.created_at,
     }));
+  } catch (error) {
+    console.error("Error fetching decks:", error);
+    return null;
+  }
+};
+
+//get All Deck
+export const getAllDecks = async (): Promise<DeckWithTotalCards[] | null> => {
+  try {
+    if (!db) throw new Error("Database connection is null");
+
+    const results: any[] = await db.getAllAsync("SELECT * FROM decks");
+
+    if (!results.length) return null;
+
+    const decksWithTotalCards: DeckWithTotalCards[] = await Promise.all(
+      results.map(async (row: any) => {
+        if (!db) throw new Error("Database connection is null");
+
+        const cardCountResult: any = db.getAllSync(
+          "SELECT COUNT(*) as totalCards FROM flashcards WHERE deck_id = ?",
+          [row.id] 
+        );
+
+        return {
+          id: row.id,
+          userId: row.user_id,
+          title: row.title,
+          description: row.description,
+          isImportant: row.is_important === 1,
+          created_at: row.created_at,
+          totalCards: cardCountResult?.totalCards || 0, 
+        };
+      })
+    );
+
+    return decksWithTotalCards;
   } catch (error) {
     console.error("Error fetching decks:", error);
     return null;

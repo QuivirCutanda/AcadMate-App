@@ -24,11 +24,14 @@ const CustomBottomSheet: React.FC<CustomBottomSheetProps> = ({
     }
   }, [isVisible]);
 
-  const handleSheetChange = useCallback((index: number) => {
-    if (index === -1) {
-      onClose();
-    }
-  }, [onClose]);
+  const handleSheetChange = useCallback(
+    (index: number) => {
+      if (index === -1) {
+        onClose();
+      }
+    },
+    [onClose]
+  );
 
   return (
     <BottomSheet
@@ -38,22 +41,17 @@ const CustomBottomSheet: React.FC<CustomBottomSheetProps> = ({
       enableDynamicSizing={false}
       handleComponent={null}
       onChange={handleSheetChange}
-      style={styles.bottomSheet} 
+      style={styles.bottomSheet}
     >
-<View 
-  className="flex-1 bg-primary shadow-lg">
-  {children}
-</View>
-
-
+      <View className="flex-1 bg-primary shadow-lg">{children}</View>
     </BottomSheet>
   );
 };
 
 const styles = StyleSheet.create({
   bottomSheet: {
-    zIndex: 1000, 
-    elevation: 15, 
+    zIndex: 1000,
+    elevation: 15,
   },
 });
 

@@ -21,8 +21,8 @@ const BottomSheetContent: React.FC<BottomSheetContentProps> = ({
   onSave,
 }) => {
   return (
-    <View className="flex-1 items-center justify-center p-4">
-      <Text className="text-xl font-bold text-secondary text-center mb-4">
+    <View className="flex-1 items-center justify-center p-4 bg-primary">
+      <Text className="text-lg font-bold text-secondary text-center mb-4">
         Creat a Flascard
       </Text>
       <TextInput
@@ -43,7 +43,7 @@ const BottomSheetContent: React.FC<BottomSheetContentProps> = ({
           onPress={onClose}
           className="bg-red-500 px-6 py-3 rounded-xl flex-row justify-center items-center gap-2"
         >
-          <MaterialIcons name="cancel" size={24} color="#FFFF" />
+          <MaterialIcons name="cancel" size={24} color="#FFFFFF" />
           <Text className="text-primary text-lg font-bold">Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
