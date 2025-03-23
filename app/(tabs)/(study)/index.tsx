@@ -19,28 +19,24 @@ const StudyList = [
     iconName: "format-list-bulleted",
     title: "Todo List",
     description: "Stay organized with task lists.",
-    route:"/(flashcard)"
   },
   {
     icon: MaterialCommunityIcons,
     iconName: "cards",
     title: "Flash Card",
     description: "Memorize fast with flashcards.",
-    route:"/(flashcard)"
   },
   {
     icon: MaterialIcons,
     iconName: "notes",
     title: "Notes",
     description: "Jot down and save ideas.",
-    route:"/(flashcard)"
   },
   {
     icon: Ionicons,
     iconName: "alarm",
     title: "Alarm Clock",
     description: "Never miss study time!",
-    route:"/(flashcard)"
   },
 ];
 const study = () => {
@@ -49,10 +45,10 @@ const study = () => {
 
   const handleRoute=(id:number)=>{
     switch(id){
-      case 0: router.navigate("./(flashcard)/"); break;
-      case 1: router.navigate("./(flashcard)/"); break;
-      case 2: router.navigate("./(flashcard)/"); break;
-      case 3: router.navigate("./(flashcard)/"); break;
+      case 0: router.navigate("/(tabs)/(study)/(flashcard)"); break;
+      case 1: router.navigate("/(tabs)/(study)/(flashcard)"); break;
+      case 2: router.navigate("/(tabs)/(study)/(flashcard)"); break;
+      case 3: router.navigate("/(tabs)/(study)/(flashcard)"); break;
     }
   }
 

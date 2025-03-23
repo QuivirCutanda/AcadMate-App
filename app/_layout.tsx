@@ -15,7 +15,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { setupDatabase } from "@/src/database/database";
+
 import "../global.css";
 import { Provider as PaperProvider } from "react-native-paper";
 
@@ -42,8 +42,6 @@ const StackLayout = () => {
         setIsFirstLaunch(false);
       }
     };
-
-    setupDatabase();
     checkFirstLaunch();
   }, []);
 
@@ -69,7 +67,7 @@ const StackLayout = () => {
       <Stack.Screen name="(tabs-AI)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="onBoarding" options={{ headerShown: false }} />
-      <Stack.Screen name="createAccount" options={{ headerShown: false }} />
+      <Stack.Screen name="createAcount" options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" />
     </Stack>
   );
