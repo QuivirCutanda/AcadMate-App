@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "@/src/components/Header";
 import StudyCard from "@/src/study/StudyCard";
 import Animated from "react-native-reanimated";
@@ -12,6 +12,11 @@ import {
 } from "@expo/vector-icons";
 import AskAIButton from "@/src/components/AskAIButton";
 import { useScroll } from "@/components/ScrollContext";
+
+import {
+  getAllUsers,
+  subscribeToUserUpdates,
+} from "@/src/database/userQueries";
 
 const StudyList = [
   {
@@ -43,20 +48,65 @@ const study = () => {
   const { scrollHandler } = useScroll();
   const router = useRouter();
 
-  const handleRoute=(id:number)=>{
-    switch(id){
-      case 0: router.navigate("/(tabs)/(study)/(flashcard)"); break;
-      case 1: router.navigate("/(tabs)/(study)/(flashcard)"); break;
-      case 2: router.navigate("/(tabs)/(study)/(flashcard)"); break;
-      case 3: router.navigate("/(tabs)/(study)/(flashcard)"); break;
+  const [userData, setUserData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    profile_pic: null as string | null,
+  });
+
+  const fetchUserData = async () => {
+    try {
+      const users = await getAllUsers();
+      if (users && users.length > 0) {
+        setUserData({
+          firstname: users[0].firstname || "",
+          lastname: users[0].lastname || "",
+          email: users[0].email || "",
+          profile_pic: users[0].profilePic || null,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
     }
-  }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+    const unsubscribe = subscribeToUserUpdates(() => {
+      console.log("Refreshing...");
+      fetchUserData();
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const handleRoute = (id: number) => {
+    switch (id) {
+      case 0:
+        router.navigate("/(tabs)/(study)/(flashcard)");
+        break;
+      case 1:
+        router.navigate("/(tabs)/(study)/(flashcard)");
+        break;
+      case 2:
+        router.navigate("/(tabs)/(study)/(flashcard)");
+        break;
+      case 3:
+        router.navigate("/(tabs)/(study)/(flashcard)");
+        break;
+    }
+  };
 
   return (
     <>
-      <Header />
+      <View className="bg-background-ligth">
+        <Header userInfo={userData} />
+      </View>
       <Animated.ScrollView
-        className="flex-1 p-4 bg-[#E0E0E0]"
+        className="flex-1 p-4 bg-background-ligth"
         onScroll={scrollHandler}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
@@ -78,7 +128,7 @@ const study = () => {
           </View>
         ))}
       </Animated.ScrollView>
-      <AskAIButton onPress={() =>router.push("/(tabs-AI)")} />
+      <AskAIButton onPress={() => router.push("/(tabs-AI)")} />
     </>
   );
 };

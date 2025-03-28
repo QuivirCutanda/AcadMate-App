@@ -44,13 +44,13 @@ const Deck = ({
           editDeck={editDeck}
         />
 
-        {/* Deck Description */}
+        {description !="" &&(  
         <Text className="text-base font-normal text-secondary">
           {description}
         </Text>
+        )}
         <Text className="text-sm font-bold text-gray-400">{totalCards} Cards</Text>
 
-        {/* Buttons */}
         <View className="flex-row justify-between items-center mt-4">
           <ActionButton
             onPress={addCard}

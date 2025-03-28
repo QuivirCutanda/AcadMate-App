@@ -6,15 +6,17 @@ type CustomBottomSheetProps = {
   isVisible: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  snapPoint:string;
 };
 
 const CustomBottomSheet: React.FC<CustomBottomSheetProps> = ({
   isVisible,
   onClose,
   children,
+  snapPoint,
 }) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["50%"], []);
+  const snapPoints = [snapPoint];
 
   useEffect(() => {
     if (isVisible) {
@@ -43,7 +45,7 @@ const CustomBottomSheet: React.FC<CustomBottomSheetProps> = ({
       onChange={handleSheetChange}
       style={styles.bottomSheet}
     >
-      <View className="flex-1 bg-primary shadow-lg">{children}</View>
+      <View className="flex-1 bg-primary rounded-t-3xl shadow-black">{children}</View>
     </BottomSheet>
   );
 };

@@ -14,15 +14,25 @@ const CustomSnackbar: React.FC<SnackbarProps> = ({
   visible,
   message,
   onDismiss,
-  backgroundColor = "black", 
+  backgroundColor = "black",
   actionLabel,
   onActionPress,
 }) => {
+  React.useEffect(() => {
+    if (visible) {
+      const timer = setTimeout(() => {
+        onDismiss();
+      }, 500);
+
+      return () => clearTimeout(timer); 
+    }
+  }, [visible, onDismiss]);
+
   return (
     <Snackbar
       visible={visible}
       onDismiss={onDismiss}
-      style={{ backgroundColor}} 
+      style={{ backgroundColor }}
       action={
         actionLabel && onActionPress
           ? { label: actionLabel, onPress: onActionPress }

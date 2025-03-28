@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, ScrollView, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import Animated, {
   SlideInLeft,
   SlideInRight,
@@ -7,7 +7,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Entypo } from "@expo/vector-icons";
-import FabGroup from "@/src/components/CustomFabGroup";
 import Header from "@/src/components/flashcard/Header";
 import Deck from "@/src/components/flashcard/Deck";
 import CustomBottomSheet from "@/src/components/CustomBottomSheet";
@@ -15,7 +14,10 @@ import Snackbar from "@/src/components/CustomSnackbar";
 import AddNewDeck from "@/src/components/flashcard/BottomSheetContent";
 import { useScroll } from "@/components/ScrollContext";
 import useBackHandler from "@/src/hooks/useBackHandler";
-import { useRouter, useSegments } from "expo-router";
+import { useFocusEffect, useRouter, useSegments } from "expo-router";
+import Button from "@/src/components/flashcard/NewDeckButton";
+import DeckModal from "@/src/components/flashcard/DeckModal";
+import EmptyBox from "@/src/components/flashcard/EmptyFlashCard";
 import {
   deleteDeck,
   getAllDecks,
@@ -38,15 +40,18 @@ const Index = () => {
   const { scrollHandler } = useScroll();
   const segments: string[] = useSegments();
 
+  const [modalVisible, setModalVisible] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
   const [snackbarBgColor, setSnackbarBgColor] = useState<string>("black");
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredDecks, setFilteredDecks] = useState<DeckType[]>([]);
   const [decks, setDecks] = useState<DeckType[]>([]);
-  const [deckId, setDeckId] = useState<number | null>();
+  const [deckId, setDeckId] = useState<number | null>(null);
   const [deckName, setDeckName] = useState<string>("");
   const [deckDescription, setDeckDescription] = useState<string>("");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const [isEditDeck, setIsEditDeck] = useState<boolean>(false);
   const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
@@ -57,32 +62,36 @@ const Index = () => {
     const shouldHideTabBar = segments.some((segment) =>
       hiddenSegments.includes(segment)
     );
-    shouldHideTabBar && setVisible(false);
+    shouldHideTabBar ? setVisible(true) : setVisible(false);
   }, [segments]);
 
   console.log(router);
   const openBottomSheet = useCallback(() => {
+    setVisible(false);
     setBottomSheetVisible(true);
-    setVisible(true);
   }, []);
 
-  const closeBottomSheet = useCallback(async () => {
-    await setBottomSheetVisible(false);
-    await setVisible(false);
+  const closeBottomSheet = useCallback(() => {
+    setBottomSheetVisible(false);
+    setVisible(true);
     setDeckName("");
     setDeckDescription("");
   }, []);
 
   useBackHandler(() => {
-    setVisible(true);
+    if (isBottomSheetVisible) {
+      closeBottomSheet();
+      return true;
+    }
     setBottomSheetVisible(false);
+    setVisible(false);
     router.back();
     return true;
   });
 
   const addNewDeck = async () => {
     if (!deckName.trim()) {
-      console.log("Deck name is required.");
+      console.warn("Deck name is required.");
       return;
     }
     const newDeck = {
@@ -97,8 +106,8 @@ const Index = () => {
     setSnackbarVisible(true);
     setSnackbarMessage("Deck added successfully");
     setSnackbarBgColor("green");
-    closeBottomSheet();
     setVisible(true);
+    closeBottomSheet();
     setDeckName("");
     setDeckDescription("");
   };
@@ -112,8 +121,8 @@ const Index = () => {
     };
 
     const success = await updateDeck(deckId, update);
-    closeBottomSheet();
     setVisible(true);
+    closeBottomSheet();
     setDeckName("");
     setDeckDescription("");
     if (success) {
@@ -131,94 +140,127 @@ const Index = () => {
 
   const getDeckByID = async (deckID: number) => {
     const data: any = await getDeckID(deckID);
-    console.log("Get Deck by ID :", data);
-    setDeckName(data[0].title);
-    setDeckDescription(data[0].description);
-    setVisible(true);
-    openBottomSheet();
+    if (data && data.length > 0) {
+      setDeckName(data[0].title);
+      setDeckDescription(data[0].description);
+      setVisible(true);
+      openBottomSheet();
+    } else {
+      console.warn("Deck not found.");
+    }
   };
 
   const removeDeck = async (deckId: number) => {
     const success = await deleteDeck(deckId);
-    if(success){
-      setSnackbarVisible(true);
+    setSnackbarVisible(true);
+
+    if (success) {
       setSnackbarMessage("Deck deleted successfully");
-      setSnackbarBgColor("green");
-    }else{
-      setSnackbarVisible(true);
+      setSnackbarBgColor("red");
+      setDecks((prevDecks) => prevDecks.filter((deck) => deck.id !== deckId));
+    } else {
       setSnackbarMessage("Failed to delete deck");
       setSnackbarBgColor("red");
-      setSnackbarMessage("Failed to delete deck");
     }
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+
+    if (query.trim() === "") {
+      setFilteredDecks(decks);
+    } else {
+      const filtered = decks.filter((deck) =>
+        deck.title.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredDecks(filtered);
+    }
+  };
+
+  const fetchDecks = async () => {
+    const data: any = await getAllDecks();
+    console.log("Fetched Decks:", data);
+
+    if (data && Array.isArray(data)) {
+      const sortedDecks = [...data].sort((a, b) =>
+        sortOrder === "asc"
+          ? a.created_at.localeCompare(b.created_at)
+          : b.created_at.localeCompare(a.created_at)
+      );
+      setDecks(sortedDecks);
+      setFilteredDecks(sortedDecks);
+    } else {
+      console.log("No decks found or invalid data structure.");
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchDecks();
+    }, [sortOrder])
+  );
+
   useEffect(() => {
-    const fetchDecks = async () => {
-      const data: any = await getAllDecks();
-      console.log("Fetched Decks:", data);
-
-      if (data && Array.isArray(data)) {
-        const sortedDecks = [...data].sort((a, b) =>
-          sortOrder === "asc"
-            ? a.created_at.localeCompare(b.created_at)
-            : b.created_at.localeCompare(a.created_at)
-        );
-        setDecks(sortedDecks);
-      } else {
-        console.log("No decks found or invalid data structure.");
-      }
-    };
-
-    fetchDecks();
     const unsubscribe = subscribeToDeckUpdates(fetchDecks);
     return () => unsubscribe();
   }, [sortOrder]);
 
-  const actions = [
-    {
-      icon: "file-import",
-      label: "Import",
-      onPress: () => console.log("Edit Clicked"),
-    },
-    {
-      icon: "file",
-      label: "Upload Docs",
-      onPress: () => console.log("Delete Clicked"),
-    },
-    { icon: "plus", label: "New Deck", onPress: openBottomSheet },
-  ];
+  const handleSelectOption = (key: string) => {
+    console.log(key);
+    switch (key) {
+      case "manualEntry":
+        openBottomSheet();
+        console.log("Manual Entry");
+        break;
+      case "importPDF":
+        console.log("Import PDF");
+        break;
+      case "importDocs":
+        console.log("Import Docs");
+        break;
+      case "scanImage":
+        console.log("Scan Image");
+        break;
+    }
+    setModalVisible(false);
+  };
 
   return (
-    <GestureHandlerRootView className="flex-1 ">
+    <GestureHandlerRootView className="flex-1 bg-background-ligth">
       <View className="flex-1 bg-background-light">
         <Header
           onPress={() => {
-            setVisible(true);
+            if (isBottomSheetVisible) {
+              closeBottomSheet();
+              return true;
+            }
+            setVisible(false);
             router.back();
           }}
         />
 
-        {/* Sorting Button with Animation */}
-        <View className="flex-row justify-between items-center px-4 mt-2 ">
-          <Text className="text-lg font-bold">Sort by Time:</Text>
-
-          <Animated.View>
-            <TouchableOpacity
-              className="flex-row items-center bg-secondary px-4 py-2 rounded-lg"
-              onPress={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-            >
-              <Text className="text-white font-bold mr-2">
-                {sortOrder === "asc" ? "Ascending" : "Descending"}
-              </Text>
-              <Entypo
-                name={sortOrder === "asc" ? "arrow-up" : "arrow-down"}
-                size={20}
-                color="white"
-              />
-            </TouchableOpacity>
-          </Animated.View>
+        <View className="px-4 mt-2">
+          {/* Sort Button */}
+          <View className="flex-row justify-between items-center">
+            <Animated.View>
+              <TouchableOpacity
+                className="flex-row items-center bg-secondary px-4 py-2 rounded-lg"
+                onPress={() =>
+                  setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                }
+              >
+                <Text className="text-white font-bold mr-2">
+                  {sortOrder === "asc" ? "Ascending" : "Descending"}
+                </Text>
+                <Entypo
+                  name={sortOrder === "asc" ? "arrow-up" : "arrow-down"}
+                  size={20}
+                  color="white"
+                />
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
         </View>
-
         <Animated.ScrollView
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -229,7 +271,7 @@ const Index = () => {
               <Animated.View
                 key={deck.id}
                 entering={
-                  sortOrder === "asc"
+                  index % 2 === 0
                     ? SlideInLeft.delay(index * 100)
                     : SlideInRight.delay(index * 100)
                 }
@@ -242,57 +284,82 @@ const Index = () => {
                   title={deck.title}
                   description={deck.description}
                   totalCards={deck.totalCards}
-                  addCard={openBottomSheet}
+                  addCard={() => {
+                    router.push(`/FlashcardItem`);
+                    router.setParams({ deckId: deck.id });
+                  }}
                   deleteDeck={() => removeDeck(deck.id)}
                   editDeck={() => {
                     getDeckByID(deck.id);
                     setIsEditDeck(true);
                     setDeckId(deck.id);
                   }}
-                  onPress={() => console.log(`View ${deck.title}`)}
+                  onPress={() => {
+                    router.push(`/FlashcardItem`);
+                    router.setParams({ deckId: deck.id });
+                  }}
                   practice={() => console.log(`Practice ${deck.title}`)}
                 />
               </Animated.View>
             ))
           ) : (
-            <Text className="text-center text-gray-500 mt-4">
-              No decks available. Add a new one!
-            </Text>
+            <EmptyBox />
           )}
         </Animated.ScrollView>
 
-        <FabGroup actions={actions} visible={visible} />
-
-        <CustomBottomSheet
-          isVisible={isBottomSheetVisible}
-          onClose={closeBottomSheet}
-        >
-          <AddNewDeck
-            deckName={deckName}
-            setDeckName={setDeckName}
-            deckDescription={deckDescription}
-            setDeckDescription={setDeckDescription}
-            onClose={closeBottomSheet}
-            onSave={() => {
-              if (isEditDeck) {
-                if (deckId !== null && deckId !== undefined) {
-                  updateDeckHandler(deckId);
-                  setIsEditDeck(false);
-                }
-              } else {
-                addNewDeck();
-              }
-            }}
+        <View className="absolute bottom-0 right-0 left-0 mb-20 flex justify-center items-center m-2 z-0">
+          <Snackbar
+            message={snackbarMessage}
+            visible={snackbarVisible}
+            backgroundColor={snackbarBgColor}
+            onDismiss={() => setSnackbarVisible(false)}
           />
-        </CustomBottomSheet>
-       <View className="absolute bottom-0 right-0 left-0 mb-20 flex justify-center items-center">
-       <Snackbar 
-        message={snackbarMessage}
-        visible={snackbarVisible}
-        backgroundColor={snackbarBgColor}
-        onDismiss={()=>setSnackbarVisible(false)}
-        />
-       </View>
+        </View>
+        <View
+          className={`flex-1 absolute h-full w-full ${
+            !visible && "bg-secondary/30 backdrop-blur"
+          }`}
+        >
+          <Button
+            onPress={() => setModalVisible(true)}
+            className={`${modalVisible ? "opacity-0" : "opacity-100"}`}
+          />
+          <CustomBottomSheet
+            isVisible={isBottomSheetVisible}
+            onClose={closeBottomSheet}
+            snapPoint="50%"
+          >
+            <DeckModal
+              visible={modalVisible}
+              onClose={() => setModalVisible(false)}
+              selectedOption={(key: string) => {
+                handleSelectOption(key);
+              }}
+            />
+            <AddNewDeck
+              header="Create a Flashcard"
+              deckName={deckName}
+              deckNameLabel="Card Name"
+              deckNamePlaceholder="Enter Card Name"
+              DescriptionLabel="Description - (Optional)"
+              Descriptionplaceholder="Enter Description"
+              setDeckName={setDeckName}
+              deckDescription={deckDescription}
+              setDeckDescription={setDeckDescription}
+              onClose={closeBottomSheet}
+              onSave={() => {
+                if (isEditDeck) {
+                  if (deckId !== null && deckId !== undefined) {
+                    updateDeckHandler(deckId);
+                    setIsEditDeck(false);
+                  }
+                } else {
+                  addNewDeck();
+                }
+              }}
+            />
+          </CustomBottomSheet>
+        </View>
       </View>
     </GestureHandlerRootView>
   );

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet } from "react-native";
 import { FAB, Portal } from "react-native-paper";
 
 type FabGroupProps = {
@@ -7,12 +6,12 @@ type FabGroupProps = {
   visible: boolean;
 };
 
-const CustomFabGroup: React.FC<FabGroupProps> = ({ actions, visible}) => {
+const CustomFabGroup: React.FC<FabGroupProps> = ({ actions, visible }) => {
   const [open, setOpen] = useState(false);
-  
+
   useEffect(() => {
-    if (visible) {
-      setOpen(false);
+    if (!visible) {
+      setOpen(false); 
     }
   }, [visible]);
 
@@ -20,7 +19,7 @@ const CustomFabGroup: React.FC<FabGroupProps> = ({ actions, visible}) => {
     <Portal>
       <FAB.Group
         open={open}
-        visible={!visible} 
+        visible={visible} 
         icon={open ? "close" : "plus"}
         actions={actions.map((action) => ({
           ...action,

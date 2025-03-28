@@ -6,9 +6,10 @@ import { Entypo } from "@expo/vector-icons";
 
 interface NewDeckButtonProps {
   onPress: () => void;
+  className?: string;
 }
 
-const NewDeckButton = ({ onPress }: NewDeckButtonProps) => {
+const NewDeckButton = ({ onPress,className }: NewDeckButtonProps) => {
   const { scrollY } = useScroll();
 
   const animatedSize = useDerivedValue(() =>
@@ -47,7 +48,7 @@ const NewDeckButton = ({ onPress }: NewDeckButtonProps) => {
     <TouchableOpacity 
     activeOpacity={0.9}
     onPress={onPress} 
-    className="absolute bottom-0 m-4 right-0 flex-row justify-center items-center">
+    className={`absolute bottom-0 m-4 right-0 flex-row justify-center items-center ${className}`}>
       <Animated.View style={[animatedStyle]} className="bg-secondary shadow-lg shadow-secondary">
         <Animated.View style={iconStyle}>
           <Entypo name="plus" size={24} color="#FFFFFF" />

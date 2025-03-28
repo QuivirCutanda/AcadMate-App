@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -10,7 +10,13 @@ import TodoCard from "@/src/components/todolist/TodoCard";
 import BalanceCard from "@/src/components/finance/BalanceCard";
 import { AntDesign, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import AskAIButton from "@/src/components/AskAIButton";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+
+import {
+  getAllUsers,
+  subscribeToUserUpdates,
+} from "@/src/database/userQueries";
+
 
 const studyData = [
   { id: 1, title: "Study", progress: 50, icon: AntDesign, iconName: "book" },
@@ -52,10 +58,49 @@ const studyData = [
 ];
 const DashBoard = () => {
   const { scrollHandler } = useScroll();
-
+  const [userData, setUserData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    profile_pic: null as string | null,
+  });
+  const fetchUserData = async () => {
+    try {
+      const users = await getAllUsers();
+      if (users && users.length > 0) {
+        setUserData({
+          firstname: users[0].firstname || "",
+          lastname: users[0].lastname || "",
+          email: users[0].email || "",
+          profile_pic: users[0].profilePic || null,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchUserData();
+    const unsubscribe = subscribeToUserUpdates(() => {
+      console.log("Refreshing...");
+      fetchUserData();
+    });
+  
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+  
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+    }, [])
+  );
+  
   return (
     <View className="flex-1 bg-[#E0E0E0]">
-      <Header />
+      <Header userInfo={userData} />
       <Animated.ScrollView
         className="flex-1 p-4"
         onScroll={scrollHandler}
@@ -118,7 +163,6 @@ const DashBoard = () => {
         <View className="pb-40"></View>
       </Animated.ScrollView>
 
-      {/* Ask AI Button */}
       <AskAIButton onPress={() => router.push("/(tabs-AI)")} />
     </View>
   );
