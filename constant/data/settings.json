@@ -10,18 +10,32 @@
       "icon": "moon"
     },
     {
-      "id": 3,
-      "title": "Notifications",
-      "icon": "bell",
-      "isSwitch": true
-    },
-    {
       "id": 4,
       "title": "Currency",
       "icon": "dollar-sign"
     },
     {
-      "id": 5,
+      "id":9,
+      "title": "Contact Us",
+      "icon": "info"
+    },
+    {
+      "id":8,
+      "title": "Bug/Issues Report",
+      "icon": "info"
+    },
+    {
+      "id": 7,
+      "title": "Terms & Conditions",
+      "icon": "info"
+    },
+    {
+      "id": 6,
+      "title": "Privacy Policy",
+      "icon": "info"
+    },
+    {
+      "id":10,
       "title": "About",
       "icon": "info"
     }

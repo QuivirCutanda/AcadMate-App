@@ -3,48 +3,13 @@ import React, { useState, useEffect } from "react";
 import Avatar from "@/src/components/Avatar";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import {
-  getAllUsers,
-  subscribeToUserUpdates,
-} from "@/src/database/userQueries";
+interface HeaderProps{
+userInfo:any;
+}
 
-const Header = () => {
+const Header = ({userInfo}:HeaderProps) => {
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState("");
-  const [userData, setUserData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    profile_pic: null as string | null,
-  });
-
-  const fetchUserData = async () => {
-    try {
-      const users = await getAllUsers();
-      if (users && users.length > 0) {
-        setUserData({
-          firstname: users[0].firstname || "",
-          lastname: users[0].lastname || "",
-          email: users[0].email || "",
-          profile_pic: users[0].profilePic || null,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserData();
-    const unsubscribe = subscribeToUserUpdates(() => {
-      console.log("Refreshing...");
-      fetchUserData();
-    });
-
-    return () => {
-      unsubscribe(); 
-    };
-  }, []);
 
   useEffect(() => {
     const updateDate = () => {
@@ -73,8 +38,8 @@ const Header = () => {
       >
         <Avatar
           source={
-            userData.profile_pic
-              ? { uri: userData.profile_pic }
+            userInfo.profile_pic
+              ? { uri: userInfo.profile_pic }
               : require("@/assets/Avatar/user.png")
           }
           size={34}
@@ -82,8 +47,8 @@ const Header = () => {
       </TouchableOpacity>
       <View className="flex-1">
         <Text className="text-lg font-bold text-primary">
-          {userData.firstname
-            ? `${userData.firstname} ${userData.lastname}`
+          {userInfo.firstname
+            ? `Hi, ${userInfo.firstname} ${userInfo.lastname}`
             : "Welcome User"}
         </Text>
         <Text className="text-base text-primary">{currentDate}</Text>

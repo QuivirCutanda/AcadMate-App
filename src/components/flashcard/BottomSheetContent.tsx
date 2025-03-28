@@ -4,36 +4,46 @@ import TextInput from "@/src/components/CustomTextInput";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 
 type BottomSheetContentProps = {
+  header:string,
   deckName: string;
+  deckNameLabel:string,
+  deckNamePlaceholder:string,
   setDeckName: (text: string) => void;
   deckDescription: string;
+  DescriptionLabel:string,
+  Descriptionplaceholder:string,
   setDeckDescription: (text: string) => void;
   onClose: () => void;
   onSave: () => void;
 };
 
 const BottomSheetContent: React.FC<BottomSheetContentProps> = ({
+  header,
   deckName,
+  deckNameLabel,
+  deckNamePlaceholder,
   setDeckName,
   deckDescription,
+  Descriptionplaceholder,
   setDeckDescription,
+  DescriptionLabel,
   onClose,
   onSave,
 }) => {
   return (
-    <View className="flex-1 items-center justify-center p-4">
-      <Text className="text-xl font-bold text-secondary text-center mb-4">
-        Creat a Flascard
+    <View className="flex-1 items-center justify-center px-4 bg-primary rounded-t-3xl">
+      <Text className="text-lg font-bold text-secondary text-center mb-4">
+        {header}
       </Text>
       <TextInput
-        label="Card Name"
-        placeholder="Enter Card Name"
+        label={deckNameLabel}
+        placeholder={deckNamePlaceholder}
         value={deckName}
         onChangeText={setDeckName}
       />
       <TextInput
-        label="Description - (Optional)"
-        placeholder="Enter Description"
+        label={DescriptionLabel}
+        placeholder={Descriptionplaceholder}
         value={deckDescription}
         onChangeText={setDeckDescription}
       />
@@ -43,7 +53,7 @@ const BottomSheetContent: React.FC<BottomSheetContentProps> = ({
           onPress={onClose}
           className="bg-red-500 px-6 py-3 rounded-xl flex-row justify-center items-center gap-2"
         >
-          <MaterialIcons name="cancel" size={24} color="#FFFF" />
+          <MaterialIcons name="cancel" size={24} color="#FFFFFF" />
           <Text className="text-primary text-lg font-bold">Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity

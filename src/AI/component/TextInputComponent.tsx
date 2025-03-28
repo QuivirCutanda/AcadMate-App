@@ -16,9 +16,9 @@ const TextInputComponent: React.FC<TextInputComponentProps> = ({
   loading,
 }) => {
   return (
-    <View className="flex-row items-end bg-primary pb-8 rounded-t-3xl gap-4 relative min-h-20">
+    <View className="flex-row items-end bg-primary pb-8 rounded-t-3xl  gap-4 relative min-h-20">
       <TextInput
-        className="flex-1 p-4 rounded-lg text-black text-base font-normal bg-white"
+        className="flex-1 p-4 mt-1 ml-2 rounded-lg text-black text-base font-normal bg-white"
         placeholder="Message..."
         value={input}
         onChangeText={setInput}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ToastAndroid } from "react-native";
+import { View, Text, ToastAndroid, ScrollView } from "react-native";
 import settingsData from "@/constant/data/settings.json";
 import Avatar from "@/src/components/Avatar";
 import SettingItem from "@/src/components/userAccount/userAccount";
@@ -112,21 +112,21 @@ const Account = () => {
         </Text>
       </View>
 
-      <View className="w-full p-4 flex-1">
-        <Text className="text-base font-bold text-gray-400 py-4">
+      <View className="w-full flex-1">
+        <Text className="text-base font-bold text-gray-400 pl-4">
           Preferences
         </Text>
-        {settingsData.map(({ id, title, icon, isSwitch }) => (
-          <SettingItem
-            key={id}
-            title={title}
-            icon={icon}
-            isSwitch={isSwitch}
-            switchValue={notifications}
-            onSwitchToggle={setNotifications}
-            onPress={() => handleOnPress(id)}
-          />
-        ))}
+        <ScrollView className="p-4">
+          {settingsData.map((item,index) => (
+            <SettingItem
+              className={`${settingsData.length -1 == index&&"mb-20"}`}
+              key={item.id}
+              title={item.title}
+              icon={item.icon}
+              onPress={() => handleOnPress(item.id)}
+            />
+          ))}
+        </ScrollView>
       </View>
     </View>
   );
