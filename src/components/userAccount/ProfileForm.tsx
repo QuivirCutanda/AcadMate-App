@@ -47,8 +47,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 : require("@/assets/Avatar/user.png")
             }
           />
-          <View className="absolute bottom-0 right-0 p-1 bg-[#E0E0E0] border-primary border rounded-full">
-            <Entypo name="camera" size={18} color="black" />
+          <View className="absolute bottom-[-5] right-0 p-2 border-primary bg-secondary border rounded-full">
+            <Entypo name="camera" size={18} color="#FFFFFF" />
           </View>
         </TouchableOpacity>
       </View>

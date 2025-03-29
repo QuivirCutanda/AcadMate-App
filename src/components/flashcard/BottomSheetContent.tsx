@@ -4,14 +4,15 @@ import TextInput from "@/src/components/CustomTextInput";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 
 type BottomSheetContentProps = {
-  header:string,
+  header: string;
   deckName: string;
-  deckNameLabel:string,
-  deckNamePlaceholder:string,
+  deckNameLabel: string;
+  deckNamePlaceholder: string;
   setDeckName: (text: string) => void;
   deckDescription: string;
-  DescriptionLabel:string,
-  Descriptionplaceholder:string,
+  DescriptionLabel: string;
+  DescriptionRequired?: boolean;
+  Descriptionplaceholder: string;
   setDeckDescription: (text: string) => void;
   onClose: () => void;
   onSave: () => void;
@@ -27,9 +28,14 @@ const BottomSheetContent: React.FC<BottomSheetContentProps> = ({
   Descriptionplaceholder,
   setDeckDescription,
   DescriptionLabel,
+  DescriptionRequired,
   onClose,
   onSave,
 }) => {
+  const isSaveDisabled = DescriptionRequired
+    ? deckDescription === ""
+    : deckName === "";
+
   return (
     <View className="flex-1 items-center justify-center px-4 bg-primary rounded-t-3xl">
       <Text className="text-lg font-bold text-secondary text-center mb-4">
@@ -59,9 +65,9 @@ const BottomSheetContent: React.FC<BottomSheetContentProps> = ({
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={onSave}
-          disabled={deckName === ""}
+          disabled={isSaveDisabled}
           className={`px-6 py-3 rounded-xl flex-row justify-center items-center gap-2 ${
-            deckName === "" ? "bg-gray-400" : "bg-secondary"
+            isSaveDisabled ? "bg-gray-400" : "bg-secondary"
           }`}
         >
           <Entypo name="save" size={24} color="#FFFFFF" />

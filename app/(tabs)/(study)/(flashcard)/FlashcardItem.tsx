@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { View, ScrollView, Alert } from "react-native";
-import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
+import { View, ScrollView, Alert, TouchableOpacity, Text } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 import Header from "@/src/components/flashcard/Header";
 import CardItem from "@/src/components/flashcard/CardItem";
@@ -12,7 +12,6 @@ import DeckModal from "@/src/components/flashcard/DeckModal";
 import Snackbar from "@/src/components/CustomSnackbar";
 import useBackHandler from "@/src/hooks/useBackHandler";
 import EmptyBox from "@/src/components/flashcard/EmptyFlashCard";
-
 import {
   insertFlashcardItem,
   getFlashcardsByDeck,
@@ -20,11 +19,19 @@ import {
   updateFlashcardItem,
   dbEventEmitter,
 } from "@/src/database/FashcardQueries";
-import { Entypo, FontAwesome5 } from "@expo/vector-icons";
+import {
+  Entypo,
+  FontAwesome5,
+  Ionicons,
+  MaterialIcons,
+} from "@expo/vector-icons";
+import ActionButton from "@/src/components/flashcard/ActionButton";
+import StudyModal from "@/src/components/flashcard/StudyModal";
+import AnimatedModal from "@/src/components/AnimatedModal";
 
 const FlashcardItem = () => {
   const router = useRouter();
-  const { deckId } =   useLocalSearchParams();
+  const { deckId } = useLocalSearchParams();
 
   const [cardId, setCardId] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -42,20 +49,16 @@ const FlashcardItem = () => {
   >(null);
   const [loading, setLoading] = useState(true);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const [studyModalBisble, setStudyModalBisble] = useState(false);
+  const [warningVisible, setWarningVisible] = useState(false);
 
   const openBottomSheet = useCallback(() => setBottomSheetVisible(true), []);
   const closeBottomSheet = useCallback(() => {
-    setBottomSheetVisible(false)
+    setBottomSheetVisible(false);
     setQuestion("");
-    setAnswer(""); 
+    setAnswer("");
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      setModalVisible(true)
-    }, [])
-  );
-  
   useBackHandler(() => {
     if (bottomSheetVisible) {
       closeBottomSheet();
@@ -105,8 +108,8 @@ const FlashcardItem = () => {
       setSnackbarBgColor("red");
       closeBottomSheet();
     }
-    setQuestion("")
-    setAnswer("")
+    setQuestion("");
+    setAnswer("");
   };
 
   const DeleteCard = async (cardId: number | null) => {
@@ -165,7 +168,7 @@ const FlashcardItem = () => {
           </View>
         ))
       ) : (
-       <EmptyBox/>
+        <EmptyBox />
       ),
     [cardItem, openBottomSheet]
   );
@@ -175,7 +178,7 @@ const FlashcardItem = () => {
     switch (key) {
       case "manualEntry":
         setMenuVisible(false);
-        setCardUpdate(false)
+        setCardUpdate(false);
         openBottomSheet();
         console.log("Manual Entry");
         break;
@@ -191,9 +194,74 @@ const FlashcardItem = () => {
     }
     setModalVisible(false);
   };
+
+  const handleStudyOption = (key: string) => {
+    switch (key) {
+      case "BasicReview":
+        cardItem && cardItem.length > 0
+          ? (setStudyModalBisble(false),
+            router.push(`/StudyScreen`),
+            router.setParams({ deckId: deckId, StudyType: key }))
+          : (setStudyModalBisble(false), setWarningVisible(true));
+        break;
+      case "MultipleChoice":
+        setStudyModalBisble(false);
+        router.push(`/StudyScreen`);
+        router.setParams({ deckId: deckId, StudyType: key });
+        console.log("MultipleChoice");
+        break;
+      case "MultipleChoiceTimer":
+        setStudyModalBisble(false);
+        router.push(`/StudyScreen`);
+        router.setParams({ deckId: deckId, StudyType: key });
+        console.log("MultipleChoiceTimer");
+        break;
+      case "WritingReview":
+        setStudyModalBisble(false);
+        router.push(`/StudyScreen`);
+        router.setParams({ deckId: deckId, StudyType: key });
+        console.log("WritingReview");
+        break;
+    }
+  };
   return (
     <View className="flex-1 bg-background-light">
-      <Header onPress={router.back} />
+      <View>
+        <AnimatedModal
+          visible={warningVisible}
+          onClose={() => setWarningVisible(false)}
+        >
+          <Ionicons name="warning" size={60} color="#eab308" />
+          <Text className="text-yellow-500 text-lg font-bold">
+            No Cards Available
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              setWarningVisible(false);
+              setMenuVisible(false);
+              setCardUpdate(false);
+              openBottomSheet();
+            }}
+            className="w-full p-4 mt-4 bg-secondary rounded-2xl"
+          >
+            <Text className="text-primary font-normal text-center">
+              Add Card
+            </Text>
+          </TouchableOpacity>
+        </AnimatedModal>
+      </View>
+
+      <Header onPress={router.back} title="Flash Card" />
+      <View className="w-44 mt-4 self-end mr-4">
+        <ActionButton
+          onPress={() => {
+            setStudyModalBisble(true);
+          }}
+          icon={<MaterialIcons name="menu-book" size={24} color="#FFFFFF" />}
+          text="Study Now"
+        />
+      </View>
       <ScrollView className="pt-4">{flashcardList}</ScrollView>
       <Button
         onPress={() => setModalVisible(true)}
@@ -243,8 +311,9 @@ const FlashcardItem = () => {
               DescriptionLabel="Answer"
               Descriptionplaceholder="Enter Answer"
               onClose={closeBottomSheet}
+              DescriptionRequired={true}
               onSave={() => {
-                cardUpdate ==true ? UpdateCard() : addFlashcard();
+                cardUpdate == true ? UpdateCard() : addFlashcard();
               }}
             />
           )}
@@ -256,6 +325,13 @@ const FlashcardItem = () => {
           onClose={() => setModalVisible(false)}
           selectedOption={(key: string) => {
             handleSelectOption(key);
+          }}
+        />
+        <StudyModal
+          visible={studyModalBisble}
+          onClose={() => setStudyModalBisble(false)}
+          selectedOption={(key: string) => {
+            handleStudyOption(key);
           }}
         />
       </View>

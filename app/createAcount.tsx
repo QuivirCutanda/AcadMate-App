@@ -25,7 +25,7 @@ const createAcount = () => {
 
   const validateEmail = (email: string) => {
     if (!email) {
-      setIsEmailValid(true); // Email is optional, so empty is valid
+      setIsEmailValid(true); 
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -149,12 +149,12 @@ const createAcount = () => {
             await saveProfile();
             await checkFirstLaunch();
           }}
-          className={`m-4 mx-4 px-6 py-3 rounded-lg flex flex-row justify-center items-center ${
+          className={`m-4 mx-4 p-4 rounded-lg flex flex-row justify-center items-center ${
             userData.firstName.trim() &&
             userData.lastName.trim() &&
             isEmailValid &&
             !loading
-              ? "bg-accent"
+              ? "bg-secondary"
               : "bg-gray-400"
           }`}
           disabled={

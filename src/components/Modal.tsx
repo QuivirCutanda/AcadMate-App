@@ -1,5 +1,6 @@
-import React, { ReactNode } from 'react';
-import { Modal, Pressable, View, Text } from 'react-native';
+import React, { ReactNode, useEffect } from 'react';
+import { Modal, View, Text } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
 interface CustomModalProps {
   visible: boolean;
@@ -7,12 +8,33 @@ interface CustomModalProps {
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({ visible, children }) => {
+  const scale = useSharedValue(0.5); 
+  const opacity = useSharedValue(0);
+
+  useEffect(() => {
+    if (visible) {
+      scale.value = withSpring(1, { damping: 10, stiffness: 100 });
+      opacity.value = withSpring(1);
+    } else {
+      scale.value = withSpring(0.5);
+      opacity.value = withSpring(0);
+    }
+  }, [visible]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
+
   return (
-    <Modal animationType="fade" transparent visible={visible}>
+    <Modal transparent visible={visible} animationType="none">
       <View className="flex-1 justify-center items-center bg-black/50">
-        <View className="bg-white p-4 rounded-2xl shadow-lg w-80 items-center">
+        <Animated.View
+          style={animatedStyle}
+          className="bg-white p-4 rounded-2xl shadow-lg w-80 items-center"
+        >
           {children}
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
