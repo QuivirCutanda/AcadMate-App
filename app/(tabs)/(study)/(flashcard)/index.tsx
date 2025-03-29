@@ -6,7 +6,7 @@ import Animated, {
   Layout,
 } from "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import Header from "@/src/components/flashcard/Header";
 import Deck from "@/src/components/flashcard/Deck";
 import CustomBottomSheet from "@/src/components/CustomBottomSheet";
@@ -17,7 +17,10 @@ import useBackHandler from "@/src/hooks/useBackHandler";
 import { useFocusEffect, useRouter, useSegments } from "expo-router";
 import Button from "@/src/components/flashcard/NewDeckButton";
 import DeckModal from "@/src/components/flashcard/DeckModal";
+import StudyModal from "@/src/components/flashcard/StudyModal";
 import EmptyBox from "@/src/components/flashcard/EmptyFlashCard";
+import AnimatedModal from "@/src/components/AnimatedModal";
+
 import {
   deleteDeck,
   getAllDecks,
@@ -41,6 +44,9 @@ const Index = () => {
   const segments: string[] = useSegments();
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [warningVisble, setWarningVisble] = useState(false);
+
+  const [studyModalBisble, setStudyModalBisble] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
   const [snackbarBgColor, setSnackbarBgColor] = useState<string>("black");
@@ -49,7 +55,9 @@ const Index = () => {
   const [filteredDecks, setFilteredDecks] = useState<DeckType[]>([]);
   const [decks, setDecks] = useState<DeckType[]>([]);
   const [deckId, setDeckId] = useState<number | null>(null);
+  const [containCards,setContainCards] = useState(false);
   const [deckName, setDeckName] = useState<string>("");
+
   const [deckDescription, setDeckDescription] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -225,6 +233,38 @@ const Index = () => {
     setModalVisible(false);
   };
 
+  const handleStudyOption = (key: string) => {
+    switch (key) {
+      case "BasicReview":
+        containCards === true ? (
+          setStudyModalBisble(false),
+          router.push(`/StudyScreen`),
+          router.setParams({ deckId: deckId, StudyType: key })
+        ) : (
+          setStudyModalBisble(false),
+          setWarningVisble(true)
+        );
+        break;
+      case "MultipleChoice":
+        setStudyModalBisble(false)
+        router.push(`/StudyScreen`);
+        router.setParams({ deckId: deckId,StudyType:key });
+        console.log("MultipleChoice");
+        break;
+      case "MultipleChoiceTimer":
+        setStudyModalBisble(false)
+        router.push(`/StudyScreen`);
+        router.setParams({ deckId: deckId,StudyType:key });
+        console.log("MultipleChoiceTimer");
+        break;
+      case "WritingReview":
+        setStudyModalBisble(false)
+        router.push(`/StudyScreen`);
+        router.setParams({ deckId: deckId,StudyType:key });
+        console.log("WritingReview");
+        break;
+    }
+  };
   return (
     <GestureHandlerRootView className="flex-1 bg-background-ligth">
       <View className="flex-1 bg-background-light">
@@ -237,29 +277,32 @@ const Index = () => {
             setVisible(false);
             router.back();
           }}
+          title="Flash Card"
         />
 
         <View className="px-4 mt-2">
           {/* Sort Button */}
-          <View className="flex-row justify-between items-center">
-            <Animated.View>
-              <TouchableOpacity
-                className="flex-row items-center bg-secondary px-4 py-2 rounded-lg"
-                onPress={() =>
-                  setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-                }
-              >
-                <Text className="text-white font-bold mr-2">
-                  {sortOrder === "asc" ? "Ascending" : "Descending"}
-                </Text>
-                <Entypo
-                  name={sortOrder === "asc" ? "arrow-up" : "arrow-down"}
-                  size={20}
-                  color="white"
-                />
-              </TouchableOpacity>
-            </Animated.View>
-          </View>
+          {decks.length > 0 && (
+            <View className="flex-row justify-between items-center">
+              <Animated.View>
+                <TouchableOpacity
+                  className="flex-row items-center bg-secondary px-4 py-2 rounded-lg"
+                  onPress={() =>
+                    setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                  }
+                >
+                  <Text className="text-white font-bold mr-2">
+                    {sortOrder === "asc" ? "Ascending" : "Descending"}
+                  </Text>
+                  <Entypo
+                    name={sortOrder === "asc" ? "arrow-up" : "arrow-down"}
+                    size={20}
+                    color="white"
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
+          )}
         </View>
         <Animated.ScrollView
           onScroll={scrollHandler}
@@ -294,11 +337,11 @@ const Index = () => {
                     setIsEditDeck(true);
                     setDeckId(deck.id);
                   }}
-                  onPress={() => {
-                    router.push(`/FlashcardItem`);
-                    router.setParams({ deckId: deck.id });
+                  practice={() => {
+                    setContainCards(deck.totalCards>0);
+                    setDeckId(deck.id);
+                    setStudyModalBisble(true);
                   }}
-                  practice={() => console.log(`Practice ${deck.title}`)}
                 />
               </Animated.View>
             ))
@@ -336,6 +379,33 @@ const Index = () => {
                 handleSelectOption(key);
               }}
             />
+            <StudyModal
+              visible={studyModalBisble}
+              onClose={() => setStudyModalBisble(false)}
+              selectedOption={(key: string) => {
+                handleStudyOption(key);
+              }}
+            />
+
+            <AnimatedModal
+              visible={warningVisble}
+              onClose={() => setWarningVisble(false)}
+            >
+              <Ionicons name="warning" size={60} color="#eab308" />
+              <Text className="text-yellow-500 text-lg font-bold">No Cards Available</Text>
+              <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={()=>{
+                setWarningVisble(false)
+                router.push(`/FlashcardItem`);
+                router.setParams({ deckId: deckId });
+              }}
+              className="w-full p-4 mt-4 bg-secondary rounded-2xl"
+              >
+                <Text className="text-primary font-normal text-center">Add Card</Text>
+              </TouchableOpacity>
+            </AnimatedModal>  
+
             <AddNewDeck
               header="Create a Flashcard"
               deckName={deckName}

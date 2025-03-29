@@ -162,7 +162,7 @@ const UpdateProfile = () => {
             userData.lastName.trim() &&
             isEmailValid &&
             !loading
-              ? "bg-accent"
+              ? "bg-secondary"
               : "bg-gray-400"
           }`}
           disabled={

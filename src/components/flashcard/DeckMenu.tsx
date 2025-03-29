@@ -50,7 +50,7 @@ const DeckMenu = ({ setMenuVisible,deleteDeck,editDeck }: DeckMenuProps) => {
           opacity: fadeAnim,
           transform: [{ translateY: slideAnim }],
         }}
-        className="absolute top-10 right-2 bg-white shadow-lg rounded-md z-10 py-2 px-4"
+        className="absolute top-10 right-2 bg-background-ligth shadow-lg rounded-md z-10 py-2 px-4"
       >
         <TouchableOpacity
           onPress={() => {

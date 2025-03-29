@@ -16,28 +16,51 @@ interface CustomModalProps {
 }
 
 const FlashcardOptions = [
-  { key: "manualEntry", label: "Create from Scratch", icon: "pencil-alt" },
-  { key: "importPDF", label: "Import from PDF", icon: "file-pdf" },
-  { key: "importDocs", label: "Import from Docs", icon: "file-word" },
-  { key: "scanImage", label: "Scan from Image", icon: "camera" },
+  {
+    key: "BasicReview",
+    label: "Basic Review",
+    description: "Flip cards to see answers.",
+    icon: "pencil-alt",
+  },
+  {
+    key: "MultipleChoice",
+    label: "Multiple Choice",
+    description: "Pick the right answer.",
+    icon: "tasks",
+  },
+  {
+    key: "MultipleChoiceTimer",
+    label: "Multiple Choice (Timer)",
+    description: "Answer within time.",
+    icon: "clock",
+  },
+  {
+    key: "WritingReview",
+    label: "Writing Review",
+    description: "Type your answers.",
+    icon: "edit",
+  },
 ];
+
+
 
 const StudyModal: React.FC<CustomModalProps> = ({
   visible,
   onClose,
   selectedOption,
 }) => {
-  const modalScale = useRef(new Animated.Value(0.8)).current;
   const scaleAnimations = useRef(
     FlashcardOptions.map(() => new Animated.Value(0))
   ).current;
 
+  const modalScale = useRef(new Animated.Value(0.8)).current;
+
   useEffect(() => {
     if (visible) {
       Animated.parallel([
-        Animated.spring(modalScale, {
+        Animated.timing(modalScale, {
           toValue: 1,
-          friction: 5,
+          duration: 250,
           useNativeDriver: true,
         }),
         Animated.stagger(
@@ -54,7 +77,7 @@ const StudyModal: React.FC<CustomModalProps> = ({
     } else {
       Animated.timing(modalScale, {
         toValue: 0.8,
-        duration: 200,
+        duration: 150,
         useNativeDriver: true,
       }).start(() => {
         scaleAnimations.forEach((anim) => anim.setValue(0));
@@ -71,8 +94,8 @@ const StudyModal: React.FC<CustomModalProps> = ({
               style={{ transform: [{ scale: modalScale }] }}
               className="bg-primary p-6 rounded-2xl shadow-lg w-96 items-center"
             >
-              <Text className="text-lg font-bold text-secondary mb-8">
-              CREATE FLASH CARD
+              <Text className="text-lg font-bold text-secondary mb-4">
+                SELECT STUDY TYPE
               </Text>
 
               {FlashcardOptions.map((option, index) => (
@@ -92,6 +115,7 @@ const StudyModal: React.FC<CustomModalProps> = ({
 
                     <View className="flex-1 ml-3">
                       <Text className="text-primary font-medium">{option.label}</Text>
+                      <Text className="text-xs text-primary">{option.description}</Text>
                     </View>
                   </TouchableOpacity>
                 </Animated.View>

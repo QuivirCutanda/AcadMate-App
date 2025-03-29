@@ -61,7 +61,7 @@ export default function OnBoarding() {
               autoPlay
               loop
               source={item.icon}
-              style={{ width: "100%", height: "60%" }}
+              style={{ width: "80%", height: "60%" }}
             />
             <Text className="font-bold text-xl p-4 text-secondary">
               {item.title}
