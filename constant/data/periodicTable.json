@@ -1,0 +1,56 @@
+{
+  "deckName": "Periodic Table Mastery",
+  "description": "Flashcards covering atomic numbers, symbols, and masses of elements.",
+  "flashcards": [
+    {
+      "id": 1,
+      "question": "What is the first element on the periodic table?",
+      "answer": "Hydrogen"
+    },
+    {
+      "id": 2,
+      "question": "Which element has the atomic number 2?",
+      "answer": "Helium"
+    },
+    {
+      "id": 3,
+      "question": "Which element has the symbol 'Li'?",
+      "answer": "Lithium"
+    },
+    {
+      "id": 4,
+      "question": "Which element has an atomic mass of 9.0122?",
+      "answer": "Beryllium"
+    },
+    {
+      "id": 5,
+      "question": "What is the atomic number of Boron?",
+      "answer": "5"
+    },
+    {
+      "id": 6,
+      "question": "Which element has the symbol 'C'?",
+      "answer": "Carbon"
+    },
+    {
+      "id": 7,
+      "question": "Which element has the atomic mass of 14.007?",
+      "answer": "Nitrogen"
+    },
+    {
+      "id": 8,
+      "question": "What is the symbol of the element with atomic number 8?",
+      "answer": "O"
+    },
+    {
+      "id": 9,
+      "question": "Which element has the atomic number 9?",
+      "answer": "Fluorine"
+    },
+    {
+      "id": 10,
+      "question": "Which element has an atomic mass of 20.180?",
+      "answer": "Neon"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ import Celebration from "@/assets/animation/celebration.json";
 import { StatusBar } from "expo-status-bar";
 import { setupDatabase } from "@/src/database/database";
 import { FlashcardTable } from "@/src/database/FlashcardsTable";
+import {insertPeriodicTableDeck} from "@/constant/GenerateFlashCard";
 
 const slides = [
   {
@@ -38,6 +39,7 @@ export default function OnBoarding() {
     const initializeDatabase = async () => {
       await setupDatabase();
       await FlashcardTable();
+      await insertPeriodicTableDeck();
     };
     initializeDatabase();
   }, [])

@@ -170,7 +170,7 @@ export default function FlashcardReview({
 
       <View className="flex items-center relative w-full h-[60%] px-4">
         <MotiView
-          className="absolute w-full h-full justify-center items-center bg-secondary rounded-2xl shadow-lg"
+          className="absolute w-full h-full justify-center items-center bg-secondary rounded-2xl shadow-lg p-4"
           style={{ backfaceVisibility: "hidden" }}
           animate={{
             rotateY: isFlipped ? "180deg" : "0deg",
