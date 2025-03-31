@@ -34,6 +34,7 @@ export default function FlashcardReview({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [slideOut, setSlideOut] = useState(false);
+  const [slideLeft, setSlideLeft] = useState(false);
   const [complete, setComplete] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -44,7 +45,7 @@ export default function FlashcardReview({
 
   useEffect(() => {
     setCards(shuffleArray([...flashcards]));
-  }, [flashcards, refreshKey]); // Depend on refreshKey to trigger re-fetch
+  }, [flashcards, refreshKey]); 
 
   useEffect(() => {
     const handleFlashcardUpdate = (updatedFlashcard: Flashcard) => {
@@ -105,12 +106,20 @@ export default function FlashcardReview({
 
     setCurrentIndex((prevIndex) => prevIndex - 1);
     setIsFlipped(false);
+    setSlideLeft(true)
+    setTimeout(()=>(
+      setSlideLeft(false)
+    ),400)
   };
 
   const handleNext = () => {
     if (currentIndex < cards.length - 1) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
       setIsFlipped(false);
+      setSlideOut(true)
+      setTimeout(()=>(
+        setSlideOut(false)
+      ),400)
     } else {
       setComplete(true);
     }
@@ -174,8 +183,9 @@ export default function FlashcardReview({
           style={{ backfaceVisibility: "hidden" }}
           animate={{
             rotateY: isFlipped ? "180deg" : "0deg",
-            translateX: slideOut ? -300 : 0,
-            opacity: slideOut ? 0 : 1,
+            translateX: slideOut ? -300 : slideLeft ? 300 : 0,
+            opacity: slideOut || slideLeft ? 0 : 1,
+            // dsd
           }}
           transition={{ type: "timing", duration: 400 }}
         >
