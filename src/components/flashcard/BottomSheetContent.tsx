@@ -38,7 +38,7 @@ const BottomSheetContent: React.FC<BottomSheetContentProps> = ({
 
   return (
     <View className="flex-1 items-center justify-center px-4 bg-primary rounded-t-3xl">
-      <Text className="text-lg font-bold text-secondary text-center mb-4">
+      <Text className="text-lg font-bold text-secondary text-center my-4">
         {header}
       </Text>
       <TextInput
@@ -53,6 +53,7 @@ const BottomSheetContent: React.FC<BottomSheetContentProps> = ({
         value={deckDescription}
         onChangeText={setDeckDescription}
       />
+      <View className="flex-1 bg-red-500"></View>
       <View className="flex-row gap-4 justify-end w-full m-4">
         <TouchableOpacity
           activeOpacity={0.7}

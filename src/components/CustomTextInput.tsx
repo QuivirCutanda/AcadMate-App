@@ -31,6 +31,10 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
+        multiline
+        textAlignVertical="top"
+        numberOfLines={5}
+        style={{ minHeight: 10, maxHeight: 100 }}
       />
       {error && <Text className="text-red-500 text-sm mt-1">{error}</Text>}
     </View>

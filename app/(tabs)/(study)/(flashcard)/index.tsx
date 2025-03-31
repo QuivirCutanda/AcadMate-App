@@ -264,7 +264,7 @@ const Index = () => {
         break;
       case "WritingReview":
         setStudyModalBisble(false);
-        router.push(`/StudyScreen`);
+        router.push(`/WritingReview`);
         router.setParams({ deckId: deckId, StudyType: key });
         console.log("WritingReview");
         break;
@@ -375,7 +375,7 @@ const Index = () => {
           <CustomBottomSheet
             isVisible={isBottomSheetVisible}
             onClose={closeBottomSheet}
-            snapPoint="50%"
+            snapPoint="60%"
           >
             <DeckModal
               visible={modalVisible}
