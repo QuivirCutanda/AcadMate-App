@@ -47,6 +47,7 @@ const FlashcardItem = () => {
   const [cardItem, setCardItem] = useState<
     { id: number; question: string; answer: string }[] | null
   >(null);
+  const [containCards, setContainCards] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [studyModalBisble, setStudyModalBisble] = useState(false);
@@ -68,6 +69,10 @@ const FlashcardItem = () => {
     router.back();
     return true;
   });
+
+  useEffect(() => {
+    setContainCards(cardItem?.length ?? 0);
+  }, [cardItem]);
 
   const addFlashcard = async () => {
     if (!question.trim() || !answer.trim()) {
@@ -198,23 +203,31 @@ const FlashcardItem = () => {
   const handleStudyOption = (key: string) => {
     switch (key) {
       case "BasicReview":
-        cardItem && cardItem.length > 0
+        containCards > 0
           ? (setStudyModalBisble(false),
             router.push(`/StudyScreen`),
             router.setParams({ deckId: deckId, StudyType: key }))
           : (setStudyModalBisble(false), setWarningVisible(true));
         break;
       case "MultipleChoice":
-        setStudyModalBisble(false);
-        router.push(`/StudyScreen`);
-        router.setParams({ deckId: deckId, StudyType: key });
-        console.log("MultipleChoice");
+        if (containCards > 4) {
+          setStudyModalBisble(false);
+          router.push(`/QuizScreen`);
+          router.setParams({ deckId: deckId, StudyType: key });
+          console.log("MultipleChoice");
+        } else {
+          setStudyModalBisble(false), setWarningVisible(true);
+        }
         break;
       case "MultipleChoiceTimer":
-        setStudyModalBisble(false);
-        router.push(`/StudyScreen`);
-        router.setParams({ deckId: deckId, StudyType: key });
-        console.log("MultipleChoiceTimer");
+        if (containCards >= 4) {
+          setStudyModalBisble(false);
+          router.push(`/QuizScreen`);
+          router.setParams({ deckId: deckId, StudyType: key });
+          console.log("MultipleChoice");
+        } else {
+          setStudyModalBisble(false), setWarningVisible(true);
+        }
         break;
       case "WritingReview":
         setStudyModalBisble(false);
@@ -232,9 +245,16 @@ const FlashcardItem = () => {
           onClose={() => setWarningVisible(false)}
         >
           <Ionicons name="warning" size={60} color="#eab308" />
-          <Text className="text-yellow-500 text-lg font-bold">
-            No Cards Available
-          </Text>
+          {containCards <= 0 && (
+            <Text className="text-yellow-500 text-lg font-bold text-center">
+              No Cards Available
+            </Text>
+          )}
+          {containCards > 0 && containCards < 4 && (
+            <Text className="text-yellow-500 text-lg font-bold text-center">
+              Add at least 4 cards to use this feature.
+            </Text>
+          )}
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {

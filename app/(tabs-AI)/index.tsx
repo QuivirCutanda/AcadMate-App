@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View,Text,ScrollView,Image,TouchableOpacity,ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { Drawer } from "react-native-drawer-layout";
 import { useRouter } from "expo-router";
 
@@ -31,7 +38,7 @@ interface MessagesState {
 
 export default function ChatScreen() {
   const router = useRouter();
-  const isConnected = useInternetStatus();
+  const { isConnected, isInternetReachable } = useInternetStatus();
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -39,22 +46,19 @@ export default function ChatScreen() {
   const [history, setHistory] = useState<ChatData[]>([]);
 
   useEffect(() => {
-    setVisible(!isConnected);
-  }, [isConnected]);
+    setVisible(!(isConnected && isInternetReachable));
+  }, [isConnected, isInternetReachable]);
 
+  
   const handleBackPress = () => {
     if (Object.keys(messages).length > 0) {
       insertMessage(1, messages)
-        .then(() => console.log("Message inserted successfully"))
-        .catch((err) => console.error("Error inserting message:", err));
       router.back();
     } else {
-      console.log("No messages to save");
       router.back();
     }
     return true;
   };
-
   useBackHandler(handleBackPress);
 
   useEffect(() => {
@@ -153,7 +157,7 @@ export default function ChatScreen() {
       )}
     >
       <Header
-        onPress={() =>handleBackPress()}
+        onPress={() => handleBackPress()}
         onPressEdit={handleClearChat}
         onPressMenu={() => setOpen(true)}
       />
@@ -174,7 +178,9 @@ export default function ChatScreen() {
             style={{ width: 90, height: 90 }}
           />
         </View>
-        <Text className="text-lg text-red-500 font-bold">No Internet connection!</Text>
+        <Text className="text-lg text-red-500 font-bold">
+          No Internet connection!
+        </Text>
       </CustomModal>
       <ChatComponent messages={messages} setMessages={setMessages} />
     </Drawer>

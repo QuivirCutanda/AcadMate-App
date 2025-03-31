@@ -12,12 +12,14 @@ interface CustomModalProps {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  Width?:string;
 }
 
 const AnimatedModal: React.FC<CustomModalProps> = ({
   visible,
   onClose,
   children,
+  Width = "80"
 }) => {
   const modalScale = useRef(new Animated.Value(0.8)).current;
   const opacity = useRef(new Animated.Value(0)).current;
@@ -59,13 +61,13 @@ const AnimatedModal: React.FC<CustomModalProps> = ({
       visible={visible}
       onRequestClose={onClose}
     >
-        <View className="flex-1 justify-center items-center bg-black/50">
+        <View className="flex-1 justify-center items-center bg-secondary/70 backdrop-blur-2">
           <Animated.View
             style={{
               transform: [{ scale: modalScale }],
               opacity: opacity,
             }}
-            className="bg-white p-6 rounded-2xl shadow-lg w-80 items-center"
+            className={`bg-white p-4 rounded-2xl shadow-lg items-center w-${Width}`}
           >
             {children}
           </Animated.View>

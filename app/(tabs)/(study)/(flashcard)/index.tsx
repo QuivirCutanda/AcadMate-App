@@ -55,7 +55,7 @@ const Index = () => {
   const [filteredDecks, setFilteredDecks] = useState<DeckType[]>([]);
   const [decks, setDecks] = useState<DeckType[]>([]);
   const [deckId, setDeckId] = useState<number | null>(null);
-  const [containCards,setContainCards] = useState(false);
+  const [containCards, setContainCards] = useState<number>(0);
   const [deckName, setDeckName] = useState<string>("");
 
   const [deckDescription, setDeckDescription] = useState<string>("");
@@ -236,31 +236,36 @@ const Index = () => {
   const handleStudyOption = (key: string) => {
     switch (key) {
       case "BasicReview":
-        containCards === true ? (
-          setStudyModalBisble(false),
-          router.push(`/StudyScreen`),
-          router.setParams({ deckId: deckId, StudyType: key })
-        ) : (
-          setStudyModalBisble(false),
-          setWarningVisble(true)
-        );
+        containCards > 0
+          ? (setStudyModalBisble(false),
+            router.push(`/StudyScreen`),
+            router.setParams({ deckId: deckId, StudyType: key }))
+          : (setStudyModalBisble(false), setWarningVisble(true));
         break;
       case "MultipleChoice":
-        setStudyModalBisble(false)
-        router.push(`/StudyScreen`);
-        router.setParams({ deckId: deckId,StudyType:key });
-        console.log("MultipleChoice");
+        if (containCards > 4) {
+          setStudyModalBisble(false);
+          router.push(`/QuizScreen`);
+          router.setParams({ deckId: deckId, StudyType: key });
+          console.log("MultipleChoice");
+        } else {
+          setStudyModalBisble(false), setWarningVisble(true);
+        }
         break;
       case "MultipleChoiceTimer":
-        setStudyModalBisble(false)
-        router.push(`/StudyScreen`);
-        router.setParams({ deckId: deckId,StudyType:key });
-        console.log("MultipleChoiceTimer");
+        if (containCards >= 4) {
+          setStudyModalBisble(false);
+          router.push(`/QuizScreen`);
+          router.setParams({ deckId: deckId, StudyType: key });
+          console.log("MultipleChoice");
+        } else {
+          setStudyModalBisble(false), setWarningVisble(true);
+        }
         break;
       case "WritingReview":
-        setStudyModalBisble(false)
+        setStudyModalBisble(false);
         router.push(`/StudyScreen`);
-        router.setParams({ deckId: deckId,StudyType:key });
+        router.setParams({ deckId: deckId, StudyType: key });
         console.log("WritingReview");
         break;
     }
@@ -338,7 +343,7 @@ const Index = () => {
                     setDeckId(deck.id);
                   }}
                   practice={() => {
-                    setContainCards(deck.totalCards>0);
+                    setContainCards(deck.totalCards);
                     setDeckId(deck.id);
                     setStudyModalBisble(true);
                   }}
@@ -392,19 +397,30 @@ const Index = () => {
               onClose={() => setWarningVisble(false)}
             >
               <Ionicons name="warning" size={60} color="#eab308" />
-              <Text className="text-yellow-500 text-lg font-bold">No Cards Available</Text>
+              {containCards <= 0 && (
+                <Text className="text-yellow-500 text-lg font-bold text-center">
+                  No Cards Available
+                </Text>
+              )}
+              {containCards > 0 && containCards < 4 && (
+                <Text className="text-yellow-500 text-lg font-bold text-center">
+                  Add at least 4 cards to use this feature.
+                </Text>
+              )}
               <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={()=>{
-                setWarningVisble(false)
-                router.push(`/FlashcardItem`);
-                router.setParams({ deckId: deckId });
-              }}
-              className="w-full p-4 mt-4 bg-secondary rounded-2xl"
+                activeOpacity={0.7}
+                onPress={() => {
+                  setWarningVisble(false);
+                  router.push(`/FlashcardItem`);
+                  router.setParams({ deckId: deckId });
+                }}
+                className="w-full p-4 mt-4 bg-secondary rounded-2xl"
               >
-                <Text className="text-primary font-normal text-center">Add Card</Text>
+                <Text className="text-primary font-normal text-center">
+                  Add Card
+                </Text>
               </TouchableOpacity>
-            </AnimatedModal>  
+            </AnimatedModal>
 
             <AddNewDeck
               header="Create a Flashcard"
