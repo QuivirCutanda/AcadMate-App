@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, Animated, Easing } from "react-native";
+import { useIsFocused } from "@react-navigation/native";  
 
 interface LinearTimerProps {
-  duration: number; 
-  start: boolean; 
-  height?: number; 
-  color?: string; 
-  onComplete?: () => void; 
+  duration: number;
+  start: boolean;
+  height?: number;
+  color?: string;
+  onComplete?: () => void;
 }
 
 const LinearTimer: React.FC<LinearTimerProps> = ({
@@ -19,9 +20,10 @@ const LinearTimer: React.FC<LinearTimerProps> = ({
   const animatedValue = useRef(new Animated.Value(0)).current;
   const [timeLeft, setTimeLeft] = useState(duration);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isFocused = useIsFocused(); 
 
   useEffect(() => {
-    if (start) {
+    if (start && isFocused) {  
       animatedValue.setValue(0);
       setTimeLeft(duration);
 
@@ -42,12 +44,18 @@ const LinearTimer: React.FC<LinearTimerProps> = ({
         easing: Easing.linear,
         useNativeDriver: false,
       }).start();
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     }
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     };
-  }, [start]); 
+  }, [start, isFocused]); 
 
   const progressWidth = animatedValue.interpolate({
     inputRange: [0, 1],
@@ -61,15 +69,12 @@ const LinearTimer: React.FC<LinearTimerProps> = ({
   };
 
   return (
-    <View className="w-ful">
+    <View className="w-full">
       <Text className="mb-2 text-sm font-bold text-secondary text-center">
         {formatTime(timeLeft)}
       </Text>
 
-      <View
-        className="w-full bg-gray-300 rounded-full overflow-hidden"
-        style={{ height }}
-      >
+      <View className="w-full bg-gray-300 rounded-full overflow-hidden" style={{ height }}>
         <Animated.View
           style={{ width: progressWidth, height, backgroundColor: color }}
         />
