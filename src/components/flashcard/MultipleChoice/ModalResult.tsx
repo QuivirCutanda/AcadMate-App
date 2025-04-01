@@ -19,11 +19,11 @@ const ModalResult = ({onTryAgain,onDone,correct,wrong}:ModalResultProps) => {
         loop={false}
         source={success}
         style={{
-          width: 250,
-          height: 250,
+          width: 300,
+          height: 300,
           position: "absolute",
-          top: -140,
-          right: -3,
+          top: -170,
+          right:0
         }}
       />
       <Text className="text-xl text-secondary font-bold text-center mt-4">

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, TouchableWithoutFeedback } from "react-native";
 import { MotiView } from "moti";
 import {
   Entypo,
@@ -45,7 +45,7 @@ export default function FlashcardReview({
 
   useEffect(() => {
     setCards(shuffleArray([...flashcards]));
-  }, [flashcards, refreshKey]); 
+  }, [flashcards, refreshKey]);
 
   useEffect(() => {
     const handleFlashcardUpdate = (updatedFlashcard: Flashcard) => {
@@ -106,20 +106,16 @@ export default function FlashcardReview({
 
     setCurrentIndex((prevIndex) => prevIndex - 1);
     setIsFlipped(false);
-    setSlideLeft(true)
-    setTimeout(()=>(
-      setSlideLeft(false)
-    ),400)
+    setSlideLeft(true);
+    setTimeout(() => setSlideLeft(false), 400);
   };
 
   const handleNext = () => {
     if (currentIndex < cards.length - 1) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
       setIsFlipped(false);
-      setSlideOut(true)
-      setTimeout(()=>(
-        setSlideOut(false)
-      ),400)
+      setSlideOut(true);
+      setTimeout(() => setSlideOut(false), 400);
     } else {
       setComplete(true);
     }
@@ -146,129 +142,131 @@ export default function FlashcardReview({
     setComplete(false);
   };
   return (
-    <View className="flex-1 justify-center items-center bg-b-ackground-ligth">
-      <View>
-        <BasicReviewModal
-          visible={complete}
-          onClose={() => setComplete(false)}
-          onPressBtnLeft={handleRepeat}
-          onPressBtnRight={() => {
-            setComplete(false);
-            handleRepeat();
-            router.back();
-          }}
-        />
-      </View>
-      <View className="flex-row p-4 justify-center items-center">
-        {!isFlipped ? (
-          <Text className="text-lg text-secondary font-bold p-4 text-start">
-            Question
-          </Text>
-        ) : (
-          <Text className="text-lg text-secondary font-bold p-4 text-start">
-            Answer
-          </Text>
-        )}
-        <TouchableOpacity
-          className="bg-secondary/70 p-2 rounded-full w-10 h-10"
-          onPress={handleEdit}
-        >
-          <Entypo name="edit" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
-
-      <View className="flex items-center relative w-full h-[60%] px-4">
-        <MotiView
-          className="absolute w-full h-full justify-center items-center bg-secondary rounded-2xl shadow-lg p-4"
-          style={{ backfaceVisibility: "hidden" }}
-          animate={{
-            rotateY: isFlipped ? "180deg" : "0deg",
-            translateX: slideOut ? -300 : slideLeft ? 300 : 0,
-            opacity: slideOut || slideLeft ? 0 : 1,
-            // dsd
-          }}
-          transition={{ type: "timing", duration: 400 }}
-        >
-          {!isFlipped && (
-            <Text className="text-lg font-bold text-center text-primary">
-              {cards[currentIndex]?.question}
-            </Text>
-          )}
-        </MotiView>
-
-        <MotiView
-          className="absolute w-full h-full justify-center items-center bg-secondary rounded-2xl shadow-lg"
-          style={{
-            backfaceVisibility: "hidden",
-            transform: [{ rotateY: "180deg" }],
-          }}
-          animate={{
-            rotateY: isFlipped ? "0deg" : "-180deg",
-            translateX: slideOut ? -300 : 0,
-            opacity: slideOut ? 0 : 1,
-          }}
-          transition={{ type: "timing", duration: 400 }}
-        >
-          {isFlipped && (
-            <Text className="text-lg font-bold text-center text-primary">
-              {cards[currentIndex]?.answer}
-            </Text>
-          )}
-        </MotiView>
-      </View>
-
-      <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={() => setIsFlipped(!isFlipped)}
-        className="my-10 mb-28 bg-secondary/10 p-4 rounded-full"
-      >
-        <MaterialIcons name="flip" size={32} color="#005596" />
-      </TouchableOpacity>
-
-      <View className="flex-row gap-4 absolute bottom-0 mb-8 mx-4 w-full px-4">
-        <TouchableOpacity
-          activeOpacity={0.7}
-          className="flex-1 py-4 rounded-2xl bg-secondary/20 flex-row items-center justify-center"
-          onPress={handlePrev}
-          disabled={currentIndex === 0}
-        >
-          <Ionicons name="chevron-back" size={24} color="#005596" />
-          <Text className="text-secondary text-lg font-bold ml-2">Prev</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          activeOpacity={0.7}
-          className="flex-1 py-4 rounded-2xl bg-secondary flex-row items-center justify-center gap-2"
-          onPress={handleNext}
-        >
-          <Text className="text-primary text-lg font-bold ml-4">Next</Text>
-          <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
-
-      {bottomSheetVisible && (
-        <View className="absolute w-full h-full bg-secondary/30">
-          <CustomBottomSheet
-            snapPoint="50%"
-            isVisible={bottomSheetVisible}
-            onClose={closeBottomSheet}
-          >
-            <AddFlashCardItem
-              header="Edit Card"
-              deckName={question}
-              setDeckName={setQuestion}
-              deckNameLabel="Question"
-              deckNamePlaceholder="Enter the question"
-              deckDescription={answer}
-              setDeckDescription={setAnswer}
-              DescriptionLabel="Answer"
-              Descriptionplaceholder="Enter the answer"
-              onSave={UpdateCard}
-              onClose={closeBottomSheet}
-            />
-          </CustomBottomSheet>
+    <TouchableWithoutFeedback onPress={() => setBottomSheetVisible(false)}>
+      <View className="flex-1 justify-center items-center bg-background-ligth">
+        <View>
+          <BasicReviewModal
+            visible={complete}
+            onClose={() => setComplete(false)}
+            onPressBtnLeft={handleRepeat}
+            onPressBtnRight={() => {
+              setComplete(false);
+              handleRepeat();
+              router.back();
+            }}
+          />
         </View>
-      )}
-    </View>
+        <View className="flex-row p-4 justify-center items-center">
+          {!isFlipped ? (
+            <Text className="text-lg text-secondary font-bold p-4 text-start">
+              Question
+            </Text>
+          ) : (
+            <Text className="text-lg text-secondary font-bold p-4 text-start">
+              Answer
+            </Text>
+          )}
+          <TouchableOpacity
+            className="bg-secondary/70 p-2 rounded-full w-10 h-10"
+            onPress={handleEdit}
+          >
+            <Entypo name="edit" size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
+
+        <View className="flex items-center relative w-full h-[60%] px-4">
+          <MotiView
+            className="absolute w-full h-full justify-center items-center bg-secondary rounded-2xl shadow-lg p-4"
+            style={{ backfaceVisibility: "hidden" }}
+            animate={{
+              rotateY: isFlipped ? "180deg" : "0deg",
+              translateX: slideOut ? -300 : slideLeft ? 300 : 0,
+              opacity: slideOut || slideLeft ? 0 : 1,
+              // dsd
+            }}
+            transition={{ type: "timing", duration: 400 }}
+          >
+            {!isFlipped && (
+              <Text className="text-lg font-bold text-center text-primary">
+                {cards[currentIndex]?.question}
+              </Text>
+            )}
+          </MotiView>
+
+          <MotiView
+            className="absolute w-full h-full justify-center items-center bg-secondary rounded-2xl shadow-lg"
+            style={{
+              backfaceVisibility: "hidden",
+              transform: [{ rotateY: "180deg" }],
+            }}
+            animate={{
+              rotateY: isFlipped ? "0deg" : "-180deg",
+              translateX: slideOut ? -300 : 0,
+              opacity: slideOut ? 0 : 1,
+            }}
+            transition={{ type: "timing", duration: 400 }}
+          >
+            {isFlipped && (
+              <Text className="text-lg font-bold text-center text-primary">
+                {cards[currentIndex]?.answer}
+              </Text>
+            )}
+          </MotiView>
+        </View>
+
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => setIsFlipped(!isFlipped)}
+          className="my-10 mb-28 bg-secondary/10 p-4 rounded-full"
+        >
+          <MaterialIcons name="flip" size={32} color="#005596" />
+        </TouchableOpacity>
+
+        <View className="flex-row gap-4 absolute bottom-0 mb-8 mx-4 w-full px-4">
+          <TouchableOpacity
+            activeOpacity={0.7}
+            className="flex-1 py-4 rounded-2xl bg-secondary/20 flex-row items-center justify-center"
+            onPress={handlePrev}
+            disabled={currentIndex === 0}
+          >
+            <Ionicons name="chevron-back" size={24} color="#005596" />
+            <Text className="text-secondary text-lg font-bold ml-2">Prev</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            className="flex-1 py-4 rounded-2xl bg-secondary flex-row items-center justify-center gap-2"
+            onPress={handleNext}
+          >
+            <Text className="text-primary text-lg font-bold ml-4">Next</Text>
+            <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
+
+        {bottomSheetVisible && (
+          <View className="absolute w-full h-full bg-secondary/30">
+            <CustomBottomSheet
+              snapPoint="50%"
+              isVisible={bottomSheetVisible}
+              onClose={closeBottomSheet}
+            >
+              <AddFlashCardItem
+                header="Edit Card"
+                deckName={question}
+                setDeckName={setQuestion}
+                deckNameLabel="Question"
+                deckNamePlaceholder="Enter the question"
+                deckDescription={answer}
+                setDeckDescription={setAnswer}
+                DescriptionLabel="Answer"
+                Descriptionplaceholder="Enter the answer"
+                onSave={UpdateCard}
+                onClose={closeBottomSheet}
+              />
+            </CustomBottomSheet>
+          </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 }

@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { View, ScrollView, Alert, TouchableOpacity, Text } from "react-native";
+import {
+  View,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+  Text,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 
 import Header from "@/src/components/flashcard/Header";
@@ -155,7 +162,9 @@ const FlashcardItem = () => {
       cardItem?.length ? (
         cardItem.map((item, index) => (
           <View
-            className={`${cardItem.length - 1 == index && "mb-20"}`}
+            className={`${
+              cardItem.length - 1 == index && "mb-20"
+            } bg-background-ligth`}
             key={item.id}
           >
             <CardItem
@@ -205,14 +214,15 @@ const FlashcardItem = () => {
       case "BasicReview":
         containCards > 0
           ? (setStudyModalBisble(false),
-            router.push(`/StudyScreen`),
+            router.push(`/BasicReview`),
+            setWarningVisible(false),
             router.setParams({ deckId: deckId, StudyType: key }))
           : (setStudyModalBisble(false), setWarningVisible(true));
         break;
       case "MultipleChoice":
         if (containCards > 4) {
           setStudyModalBisble(false);
-          router.push(`/QuizScreen`);
+          router.push(`/MultipleChoice`);
           router.setParams({ deckId: deckId, StudyType: key });
           console.log("MultipleChoice");
         } else {
@@ -222,7 +232,7 @@ const FlashcardItem = () => {
       case "MultipleChoiceTimer":
         if (containCards >= 4) {
           setStudyModalBisble(false);
-          router.push(`/QuizScreen`);
+          router.push(`/MultipleChoiceTimer`);
           router.setParams({ deckId: deckId, StudyType: key });
           console.log("MultipleChoice");
         } else {
@@ -230,138 +240,141 @@ const FlashcardItem = () => {
         }
         break;
       case "WritingReview":
-        setStudyModalBisble(false);
-        router.push(`/StudyScreen`);
-        router.setParams({ deckId: deckId, StudyType: key });
-        console.log("WritingReview");
+        containCards > 0
+          ? (setStudyModalBisble(false),
+            router.push(`/WritingReview`),
+            router.setParams({ deckId: deckId, StudyType: key }))
+          : (setStudyModalBisble(false), setWarningVisible(true));
         break;
     }
   };
   return (
-    <View className="flex-1 bg-background-light">
-      <View>
-        <AnimatedModal
-          visible={warningVisible}
-          onClose={() => setWarningVisible(false)}
-        >
-          <Ionicons name="warning" size={60} color="#eab308" />
-          {containCards <= 0 && (
-            <Text className="text-yellow-500 text-lg font-bold text-center">
-              No Cards Available
-            </Text>
-          )}
-          {containCards > 0 && containCards < 4 && (
-            <Text className="text-yellow-500 text-lg font-bold text-center">
-              Add at least 4 cards to use this feature.
-            </Text>
-          )}
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => {
-              setWarningVisible(false);
-              setMenuVisible(false);
-              setCardUpdate(false);
-              openBottomSheet();
-            }}
-            className="w-full p-4 mt-4 bg-secondary rounded-2xl"
+    <TouchableWithoutFeedback onPress={() => setBottomSheetVisible(false)}>
+      <View className="flex-1 bg-background-ligth">
+        <View>
+          <AnimatedModal
+            visible={warningVisible}
+            onClose={() => setWarningVisible(false)}
           >
-            <Text className="text-primary font-normal text-center">
-              Add Card
-            </Text>
-          </TouchableOpacity>
-        </AnimatedModal>
-      </View>
+            <Ionicons name="warning" size={60} color="#eab308" />
+            {containCards <= 0 && (
+              <Text className="text-yellow-500 text-lg font-bold text-center">
+                No Cards Available
+              </Text>
+            )}
+            {containCards > 0 && containCards < 4 && (
+              <Text className="text-yellow-500 text-lg font-bold text-center">
+                Add at least 4 cards to use this feature.
+              </Text>
+            )}
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setWarningVisible(false);
+                setMenuVisible(false);
+                setCardUpdate(false);
+                openBottomSheet();
+              }}
+              className="w-full p-4 mt-4 bg-secondary rounded-2xl"
+            >
+              <Text className="text-primary font-normal text-center">
+                Add Card
+              </Text>
+            </TouchableOpacity>
+          </AnimatedModal>
+        </View>
 
-      <Header onPress={router.back} title="Flash Card" />
-      <View className="w-44 mt-4 self-end mr-4">
-        <ActionButton
-          onPress={() => {
-            setStudyModalBisble(true);
-          }}
-          icon={<MaterialIcons name="menu-book" size={24} color="#FFFFFF" />}
-          text="Study Now"
+        <Header onPress={router.back} title="Flash Card" />
+        <View className="w-44 flex justify-center items-center self-end m-4">
+          <ActionButton
+            onPress={() => {
+              setStudyModalBisble(true);
+            }}
+            icon={<MaterialIcons name="menu-book" size={24} color="#FFFFFF" />}
+            text="Study Now"
+          />
+        </View>
+        <ScrollView className="pt-4">{flashcardList}</ScrollView>
+        <Button
+          onPress={() => setModalVisible(true)}
+          className={`${modalVisible ? "opacity-0" : "opacity-100"}`}
         />
-      </View>
-      <ScrollView className="pt-4">{flashcardList}</ScrollView>
-      <Button
-        onPress={() => setModalVisible(true)}
-        className={`${modalVisible ? "opacity-0" : "opacity-100"}`}
-      />
-      <View
-        className={`flex-1 absolute h-full w-full ${
-          bottomSheetVisible && "bg-secondary/30 backdrop-blur"
-        }`}
-      >
-        <CustomBottomSheet
-          snapPoint={`${menuVisible ? "20%" : "50%"}`}
-          isVisible={bottomSheetVisible}
-          onClose={closeBottomSheet}
+        <View
+          className={`flex-1 absolute h-full w-full ${
+            bottomSheetVisible && "bg-secondary/30 backdrop-blur"
+          }`}
         >
-          {menuVisible ? (
-            <View className="p-4">
-              <MenuItem
-                label="Edit"
-                Icon={Entypo}
-                iconName="edit"
-                iconColor="#005596"
-                onPress={() => {
-                  setMenuVisible(false);
-                  setCardUpdate(true);
-                  openBottomSheet();
+          <CustomBottomSheet
+            snapPoint={`${menuVisible ? "20%" : "50%"}`}
+            isVisible={bottomSheetVisible}
+            onClose={closeBottomSheet}
+          >
+            {menuVisible ? (
+              <View className="p-4">
+                <MenuItem
+                  label="Edit"
+                  Icon={Entypo}
+                  iconName="edit"
+                  iconColor="#005596"
+                  onPress={() => {
+                    setMenuVisible(false);
+                    setCardUpdate(true);
+                    openBottomSheet();
+                  }}
+                />
+                <MenuItem
+                  label="Remove"
+                  Icon={FontAwesome5}
+                  iconName="trash"
+                  iconColor="#ef4444"
+                  textColor="text-red-500"
+                  onPress={() => DeleteCard(cardId)}
+                />
+              </View>
+            ) : (
+              <AddFlashCardItem
+                header="Add Card"
+                deckName={question}
+                setDeckName={setQuestion}
+                deckNameLabel="Question"
+                deckDescription={answer}
+                setDeckDescription={setAnswer}
+                deckNamePlaceholder="Enter Question"
+                DescriptionLabel="Answer"
+                Descriptionplaceholder="Enter Answer"
+                onClose={closeBottomSheet}
+                DescriptionRequired={true}
+                onSave={() => {
+                  cardUpdate == true ? UpdateCard() : addFlashcard();
                 }}
               />
-              <MenuItem
-                label="Remove"
-                Icon={FontAwesome5}
-                iconName="trash"
-                iconColor="#ef4444"
-                textColor="text-red-500"
-                onPress={() => DeleteCard(cardId)}
-              />
-            </View>
-          ) : (
-            <AddFlashCardItem
-              header="Add Card"
-              deckName={question}
-              setDeckName={setQuestion}
-              deckNameLabel="Question"
-              deckDescription={answer}
-              setDeckDescription={setAnswer}
-              deckNamePlaceholder="Enter Question"
-              DescriptionLabel="Answer"
-              Descriptionplaceholder="Enter Answer"
-              onClose={closeBottomSheet}
-              DescriptionRequired={true}
-              onSave={() => {
-                cardUpdate == true ? UpdateCard() : addFlashcard();
-              }}
-            />
-          )}
-        </CustomBottomSheet>
-      </View>
-      <View>
-        <DeckModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          selectedOption={(key: string) => {
-            handleSelectOption(key);
-          }}
-        />
-        <StudyModal
-          visible={studyModalBisble}
-          onClose={() => setStudyModalBisble(false)}
-          selectedOption={(key: string) => {
-            handleStudyOption(key);
-          }}
+            )}
+          </CustomBottomSheet>
+        </View>
+        <View>
+          <DeckModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            selectedOption={(key: string) => {
+              handleSelectOption(key);
+            }}
+          />
+          <StudyModal
+            visible={studyModalBisble}
+            onClose={() => setStudyModalBisble(false)}
+            selectedOption={(key: string) => {
+              handleStudyOption(key);
+            }}
+          />
+        </View>
+        <Snackbar
+          message={snackbarMessage}
+          visible={snackbarVisible}
+          backgroundColor={snackbarBgColor}
+          onDismiss={() => setSnackbarVisible(false)}
         />
       </View>
-      <Snackbar
-        message={snackbarMessage}
-        visible={snackbarVisible}
-        backgroundColor={snackbarBgColor}
-        onDismiss={() => setSnackbarVisible(false)}
-      />
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

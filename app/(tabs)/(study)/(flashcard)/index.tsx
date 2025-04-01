@@ -1,5 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native";
 import Animated, {
   SlideInLeft,
   SlideInRight,
@@ -238,16 +243,16 @@ const Index = () => {
       case "BasicReview":
         containCards > 0
           ? (setStudyModalBisble(false),
-            router.push(`/StudyScreen`),
+            setWarningVisble(false),
+            router.push(`/BasicReview`),
             router.setParams({ deckId: deckId, StudyType: key }))
           : (setStudyModalBisble(false), setWarningVisble(true));
         break;
       case "MultipleChoice":
         if (containCards > 4) {
           setStudyModalBisble(false);
-          router.push(`/QuizScreen`);
+          router.push(`/MultipleChoice`);
           router.setParams({ deckId: deckId, StudyType: key });
-          console.log("MultipleChoice");
         } else {
           setStudyModalBisble(false), setWarningVisble(true);
         }
@@ -255,7 +260,7 @@ const Index = () => {
       case "MultipleChoiceTimer":
         if (containCards >= 4) {
           setStudyModalBisble(false);
-          router.push(`/QuizScreen`);
+          router.push(`/MultipleChoiceTimer`);
           router.setParams({ deckId: deckId, StudyType: key });
           console.log("MultipleChoice");
         } else {
@@ -263,190 +268,195 @@ const Index = () => {
         }
         break;
       case "WritingReview":
-        setStudyModalBisble(false);
-        router.push(`/WritingReview`);
-        router.setParams({ deckId: deckId, StudyType: key });
-        console.log("WritingReview");
+        containCards > 0
+          ? (setStudyModalBisble(false),
+            router.push(`/WritingReview`),
+            router.setParams({ deckId: deckId, StudyType: key }))
+          : (setStudyModalBisble(false), setWarningVisble(true));
         break;
     }
   };
   return (
     <GestureHandlerRootView className="flex-1 bg-background-ligth">
-      <View className="flex-1 bg-background-light">
-        <Header
-          onPress={() => {
-            if (isBottomSheetVisible) {
-              closeBottomSheet();
-              return true;
-            }
-            setVisible(false);
-            router.back();
-          }}
-          title="Flash Card"
-        />
-
-        <View className="px-4 mt-2">
-          {/* Sort Button */}
-          {decks.length > 0 && (
-            <View className="flex-row justify-between items-center">
-              <Animated.View>
-                <TouchableOpacity
-                  className="flex-row items-center bg-secondary px-4 py-2 rounded-lg"
-                  onPress={() =>
-                    setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-                  }
-                >
-                  <Text className="text-white font-bold mr-2">
-                    {sortOrder === "asc" ? "Ascending" : "Descending"}
-                  </Text>
-                  <Entypo
-                    name={sortOrder === "asc" ? "arrow-up" : "arrow-down"}
-                    size={20}
-                    color="white"
-                  />
-                </TouchableOpacity>
-              </Animated.View>
-            </View>
-          )}
-        </View>
-        <Animated.ScrollView
-          onScroll={scrollHandler}
-          scrollEventThrottle={16}
-          className="flex w-full p-4 bg-background-light"
-        >
-          {decks.length > 0 ? (
-            decks.map((deck, index) => (
-              <Animated.View
-                key={deck.id}
-                entering={
-                  index % 2 === 0
-                    ? SlideInLeft.delay(index * 100)
-                    : SlideInRight.delay(index * 100)
-                }
-                layout={Layout.springify()}
-                className={`flex-1 ${
-                  decks.length - 1 === index ? "mb-28" : ""
-                }`}
-              >
-                <Deck
-                  title={deck.title}
-                  description={deck.description}
-                  totalCards={deck.totalCards}
-                  addCard={() => {
-                    router.push(`/FlashcardItem`);
-                    router.setParams({ deckId: deck.id });
-                  }}
-                  deleteDeck={() => removeDeck(deck.id)}
-                  editDeck={() => {
-                    getDeckByID(deck.id);
-                    setIsEditDeck(true);
-                    setDeckId(deck.id);
-                  }}
-                  practice={() => {
-                    setContainCards(deck.totalCards);
-                    setDeckId(deck.id);
-                    setStudyModalBisble(true);
-                  }}
-                />
-              </Animated.View>
-            ))
-          ) : (
-            <EmptyBox />
-          )}
-        </Animated.ScrollView>
-
-        <View className="absolute bottom-0 right-0 left-0 mb-20 flex justify-center items-center m-2 z-0">
-          <Snackbar
-            message={snackbarMessage}
-            visible={snackbarVisible}
-            backgroundColor={snackbarBgColor}
-            onDismiss={() => setSnackbarVisible(false)}
+      <TouchableWithoutFeedback onPress={() => setBottomSheetVisible(false)}>
+        <View className="flex-1 bg-background-ligth">
+          <Header
+            onPress={() => {
+              if (isBottomSheetVisible) {
+                closeBottomSheet();
+                return true;
+              }
+              setVisible(false);
+              router.back();
+            }}
+            title="Flash Card"
           />
-        </View>
-        <View
-          className={`flex-1 absolute h-full w-full ${
-            !visible && "bg-secondary/30 backdrop-blur"
-          }`}
-        >
-          <Button
-            onPress={() => setModalVisible(true)}
-            className={`${modalVisible ? "opacity-0" : "opacity-100"}`}
-          />
-          <CustomBottomSheet
-            isVisible={isBottomSheetVisible}
-            onClose={closeBottomSheet}
-            snapPoint="60%"
+
+          <View className="px-4 mt-2">
+            {/* Sort Button */}
+            {decks.length > 0 && (
+              <View className="flex-row justify-between items-center">
+                <Animated.View>
+                  <TouchableOpacity
+                    className="flex-row items-center bg-secondary px-4 py-2 rounded-lg"
+                    onPress={() =>
+                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                    }
+                  >
+                    <Text className="text-white font-bold mr-2">
+                      {sortOrder === "asc" ? "Ascending" : "Descending"}
+                    </Text>
+                    <Entypo
+                      name={sortOrder === "asc" ? "arrow-up" : "arrow-down"}
+                      size={20}
+                      color="white"
+                    />
+                  </TouchableOpacity>
+                </Animated.View>
+              </View>
+            )}
+          </View>
+          <Animated.ScrollView
+            onScroll={scrollHandler}
+            scrollEventThrottle={16}
+            className="flex w-full p-4 bg-background-light"
           >
-            <DeckModal
-              visible={modalVisible}
-              onClose={() => setModalVisible(false)}
-              selectedOption={(key: string) => {
-                handleSelectOption(key);
-              }}
-            />
-            <StudyModal
-              visible={studyModalBisble}
-              onClose={() => setStudyModalBisble(false)}
-              selectedOption={(key: string) => {
-                handleStudyOption(key);
-              }}
-            />
-
-            <AnimatedModal
-              visible={warningVisble}
-              onClose={() => setWarningVisble(false)}
-            >
-              <Ionicons name="warning" size={60} color="#eab308" />
-              {containCards <= 0 && (
-                <Text className="text-yellow-500 text-lg font-bold text-center">
-                  No Cards Available
-                </Text>
-              )}
-              {containCards > 0 && containCards < 4 && (
-                <Text className="text-yellow-500 text-lg font-bold text-center">
-                  Add at least 4 cards to use this feature.
-                </Text>
-              )}
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setWarningVisble(false);
-                  router.push(`/FlashcardItem`);
-                  router.setParams({ deckId: deckId });
-                }}
-                className="w-full p-4 mt-4 bg-secondary rounded-2xl"
-              >
-                <Text className="text-primary font-normal text-center">
-                  Add Card
-                </Text>
-              </TouchableOpacity>
-            </AnimatedModal>
-
-            <AddNewDeck
-              header="Create a Flashcard"
-              deckName={deckName}
-              deckNameLabel="Card Name"
-              deckNamePlaceholder="Enter Card Name"
-              DescriptionLabel="Description - (Optional)"
-              Descriptionplaceholder="Enter Description"
-              setDeckName={setDeckName}
-              deckDescription={deckDescription}
-              setDeckDescription={setDeckDescription}
-              onClose={closeBottomSheet}
-              onSave={() => {
-                if (isEditDeck) {
-                  if (deckId !== null && deckId !== undefined) {
-                    updateDeckHandler(deckId);
-                    setIsEditDeck(false);
+            {decks.length > 0 ? (
+              decks.map((deck, index) => (
+                <Animated.View
+                  key={deck.id}
+                  entering={
+                    index % 2 === 0
+                      ? SlideInLeft.delay(index * 100)
+                      : SlideInRight.delay(index * 100)
                   }
-                } else {
-                  addNewDeck();
-                }
-              }}
+                  layout={Layout.springify()}
+                  className={`flex-1 ${
+                    decks.length - 1 === index ? "mb-28" : ""
+                  }`}
+                >
+                  <Deck
+                    title={deck.title}
+                    description={deck.description}
+                    totalCards={deck.totalCards}
+                    addCard={() => {
+                      router.push(`/FlashcardItem`);
+                      router.setParams({ deckId: deck.id });
+                    }}
+                    deleteDeck={() => removeDeck(deck.id)}
+                    editDeck={() => {
+                      getDeckByID(deck.id);
+                      setIsEditDeck(true);
+                      setDeckId(deck.id);
+                    }}
+                    practice={() => {
+                      setContainCards(deck.totalCards);
+                      setDeckId(deck.id);
+                      setStudyModalBisble(true);
+                    }}
+                  />
+                </Animated.View>
+              ))
+            ) : (
+              <EmptyBox />
+            )}
+          </Animated.ScrollView>
+
+          <View className="absolute bottom-0 right-0 left-0 mb-20 flex justify-center items-center m-2 z-0">
+            <Snackbar
+              message={snackbarMessage}
+              visible={snackbarVisible}
+              backgroundColor={snackbarBgColor}
+              onDismiss={() => setSnackbarVisible(false)}
             />
-          </CustomBottomSheet>
+          </View>
+          <View
+            className={`flex-1 absolute h-full w-full ${
+              !visible && "bg-secondary/30 backdrop-blur"
+            }`}
+          >
+            <Button
+              onPress={() => setModalVisible(true)}
+              className={`${modalVisible ? "opacity-0" : "opacity-100"}`}
+            />
+            <View>
+              <DeckModal
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                selectedOption={(key: string) => {
+                  handleSelectOption(key);
+                }}
+              />
+              <StudyModal
+                visible={studyModalBisble}
+                onClose={() => setStudyModalBisble(false)}
+                selectedOption={(key: string) => {
+                  handleStudyOption(key);
+                }}
+              />
+            </View>
+
+            <CustomBottomSheet
+              isVisible={isBottomSheetVisible}
+              onClose={closeBottomSheet}
+              snapPoint="60%"
+            >
+              <AnimatedModal
+                visible={warningVisble}
+                onClose={() => setWarningVisble(false)}
+              >
+                <Ionicons name="warning" size={60} color="#eab308" />
+                {containCards <= 0 && (
+                  <Text className="text-yellow-500 text-lg font-bold text-center">
+                    No Cards Available
+                  </Text>
+                )}
+                {containCards > 0 && containCards < 4 && (
+                  <Text className="text-yellow-500 text-lg font-bold text-center">
+                    Add at least 4 cards to use this feature.
+                  </Text>
+                )}
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setWarningVisble(false);
+                    router.push(`/FlashcardItem`);
+                    router.setParams({ deckId: deckId });
+                  }}
+                  className="w-full p-4 mt-4 bg-secondary rounded-2xl"
+                >
+                  <Text className="text-primary font-normal text-center">
+                    Add Card
+                  </Text>
+                </TouchableOpacity>
+              </AnimatedModal>
+
+              <AddNewDeck
+                header="Create a Flashcard"
+                deckName={deckName}
+                deckNameLabel="Card Name"
+                deckNamePlaceholder="Enter Card Name"
+                DescriptionLabel="Description - (Optional)"
+                Descriptionplaceholder="Enter Description"
+                setDeckName={setDeckName}
+                deckDescription={deckDescription}
+                setDeckDescription={setDeckDescription}
+                onClose={closeBottomSheet}
+                onSave={() => {
+                  if (isEditDeck) {
+                    if (deckId !== null && deckId !== undefined) {
+                      updateDeckHandler(deckId);
+                      setIsEditDeck(false);
+                    }
+                  } else {
+                    addNewDeck();
+                  }
+                }}
+              />
+            </CustomBottomSheet>
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </GestureHandlerRootView>
   );
 };

@@ -7,11 +7,13 @@ import {
   Vibration,
   BackHandler,
 } from "react-native";
-import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import Header from "@/src/components/flashcard/Header";
+import LinearTimer from "@/src/components/LinearTimer";
 import Modal from "@/src/components/AnimatedModal";
 import Result from "@/src/components/flashcard/MultipleChoice/ModalResult";
+import TimerDuration from "@/src/components/flashcard/MultipleChoice/TimerDuration";
+import { router, useLocalSearchParams } from "expo-router";
 
 interface Flashcard {
   id: number;
@@ -30,7 +32,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
   onBack,
   studyType,
 }) => {
-  const router = useRouter();
+  const { StudyType } = useLocalSearchParams();
   const [options, setOptions] = useState<{ id: string; text: string }[]>([]);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -40,27 +42,35 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
     [key: string]: Animated.Value;
   }>({});
   const timerCompleted = useRef(false);
+  const [duration, setDuration] = useState<number>(0);
+  const [showDurationModal, setShowDurationModal] = useState(false);
   const [resetKey, setResetKey] = useState(0);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  
+  // Store reference to the timer
+  const timerRef = useRef<any>(null);
 
   useFocusEffect(
     useCallback(() => {
+      // Reset the timer whenever the screen becomes focused
       setResetKey((prev) => prev + 1);
-      startNewGame();
+      setShowDurationModal(true);
       const handleBackPress = () => {
+        setShowDurationModal(false);
         onBack();
         return true;
       };
+
       BackHandler.addEventListener("hardwareBackPress", handleBackPress);
       return () => {
         BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+        // Clear timer when the screen is unfocused
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+        }
       };
     }, [onBack])
   );
-
-  useEffect(() => {
-    return () => {};
-  }, []);
 
   useEffect(() => {
     if (flashcards.length > 0) {
@@ -90,6 +100,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
         .map((opt, i) => ({ id: String.fromCharCode(65 + i), text: opt }))
     );
   };
+
   useEffect(() => {
     const newAnimations: { [key: string]: Animated.Value } = {};
     options.forEach((opt) => {
@@ -139,6 +150,13 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
     setTimeout(() => moveToNextQuestion(selectedText === correctAnswer), 1500);
   };
 
+  const handleTimeout = () => {
+    if (!answered && !timerCompleted.current) {
+      timerCompleted.current = true;
+      handleAnswer(null);
+    }
+  };
+
   const moveToNextQuestion = (gotCorrect: boolean) => {
     if (currentIndex + 1 < flashcards.length) {
       const nextIndex = currentIndex + 1;
@@ -154,12 +172,31 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
 
   return (
     <View className="bg-background-light flex-1">
+      <Header
+        onPress={() => {
+          setResetKey((prev) => prev + 1);
+          onBack();
+        }}
+        title={"Multiple Choice (Timer)"}
+      />
       <Modal
-        visible={modalVisible}
         onClose={() => {
           router.back();
-          setModalVisible(false);
+          setShowDurationModal(false);
         }}
+        visible={showDurationModal}
+        Width="96"
+      >
+        <TimerDuration
+          durationTime={(time) => {
+            setDuration(time);
+            setShowDurationModal(false);
+          }}
+        />
+      </Modal>
+      <Modal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
         Width="96"
       >
         <Result
@@ -173,14 +210,20 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
           wrong={flashcards.length - score}
         />
       </Modal>
-      <Header
-        onPress={() => {
-          setResetKey((prev) => prev + 1);
-          onBack();
-        }}
-        title={"Multiple Choice"}
-      />
+
       <View className="bg-background-ligth p-4 flex-1 justify-center items-center">
+        <View className="mb-4 justify-center w-full">
+          {showDurationModal == false && (
+            <LinearTimer
+              key={resetKey}
+              duration={duration}
+              start={!answered}
+              height={10}
+              color="#005596"
+              onComplete={handleTimeout}
+            />
+          )}
+        </View>
         <View className="bg-secondary flex-1 justify-center items-center w-full rounded-2xl mb-4 p-4">
           <Text className="absolute top-0 right-0 m-4 text-sm text-primary">
             {currentIndex + 1}/{flashcards.length}
@@ -192,7 +235,6 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
 
         {options.map((option) => {
           const isCorrect = option.text === flashcards[currentIndex].answer;
-          const isSelected = selectedOption === option.id;
           return (
             <Animated.View
               key={option.id}
