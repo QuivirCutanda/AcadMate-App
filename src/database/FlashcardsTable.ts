@@ -44,6 +44,7 @@ export const FlashcardTable = async () => {
         is_correct BOOLEAN NOT NULL DEFAULT 0,
         FOREIGN KEY (flashcard_id) REFERENCES flashcards(id) ON DELETE CASCADE
       );
+
     `);
 
     console.log("Flashcard tables initialized successfully");

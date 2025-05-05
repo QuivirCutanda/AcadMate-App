@@ -25,6 +25,10 @@ import DeckModal from "@/src/components/flashcard/DeckModal";
 import StudyModal from "@/src/components/flashcard/StudyModal";
 import EmptyBox from "@/src/components/flashcard/EmptyFlashCard";
 import AnimatedModal from "@/src/components/AnimatedModal";
+import Modal from "@/src/components/AnimatedModal";
+import UploadDocument from "@/src/components/flashcard/uploadDocument";
+import useInternetStatus from "@/src/hooks/useInternetStatus";
+import NoInternet from "@/src/components/NoInternet";
 
 import {
   deleteDeck,
@@ -47,6 +51,7 @@ const Index = () => {
   const router = useRouter();
   const { scrollHandler } = useScroll();
   const segments: string[] = useSegments();
+  const { isConnected, isInternetReachable } = useInternetStatus();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [warningVisble, setWarningVisble] = useState(false);
@@ -69,6 +74,9 @@ const Index = () => {
   const [isEditDeck, setIsEditDeck] = useState<boolean>(false);
   const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [visible, setVisible] = useState<boolean>(false);
+
+  const [internetConnected, setInternetConnected] = useState<boolean>(false);
+  const [showImport, setShowImport] = useState<boolean>(false);
 
   useEffect(() => {
     const hiddenSegments = ["(flashcard)"];
@@ -229,6 +237,8 @@ const Index = () => {
         console.log("Import PDF");
         break;
       case "importDocs":
+        setInternetConnected(!(isConnected && isInternetReachable));
+        setShowImport(true);
         console.log("Import Docs");
         break;
       case "scanImage":
@@ -276,6 +286,7 @@ const Index = () => {
         break;
     }
   };
+
   return (
     <GestureHandlerRootView className="flex-1 bg-background-ligth">
       <TouchableWithoutFeedback onPress={() => setBottomSheetVisible(false)}>
@@ -370,6 +381,9 @@ const Index = () => {
               onDismiss={() => setSnackbarVisible(false)}
             />
           </View>
+
+          <View></View>
+
           <View
             className={`flex-1 absolute h-full w-full ${
               !visible && "bg-secondary/30 backdrop-blur"
@@ -380,6 +394,20 @@ const Index = () => {
               className={`${modalVisible ? "opacity-0" : "opacity-100"}`}
             />
             <View>
+              <Modal
+                visible={showImport}
+                onClose={() => {
+
+                }}
+                Width="96"
+              >
+                {internetConnected == !true ? (
+                  <UploadDocument onDone={(isDone) => setShowImport(false)} />
+                ) : (
+                  <NoInternet onOk={() => setShowImport(false)} />
+                )}
+              </Modal>
+
               <DeckModal
                 visible={modalVisible}
                 onClose={() => setModalVisible(false)}

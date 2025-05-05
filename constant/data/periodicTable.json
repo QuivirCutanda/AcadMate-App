@@ -26,31 +26,6 @@
       "id": 5,
       "question": "What is the atomic number of Boron?",
       "answer": "5"
-    },
-    {
-      "id": 6,
-      "question": "Which element has the symbol 'C'?",
-      "answer": "Carbon"
-    },
-    {
-      "id": 7,
-      "question": "Which element has the atomic mass of 14.007?",
-      "answer": "Nitrogen"
-    },
-    {
-      "id": 8,
-      "question": "What is the symbol of the element with atomic number 8?",
-      "answer": "O"
-    },
-    {
-      "id": 9,
-      "question": "Which element has the atomic number 9?",
-      "answer": "Fluorine"
-    },
-    {
-      "id": 10,
-      "question": "Which element has an atomic mass of 20.180?",
-      "answer": "Neon"
     }
   ]
 }
