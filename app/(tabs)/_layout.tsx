@@ -11,7 +11,7 @@ export default function TabLayout() {
   }, [segments]); 
 
   // Define the segments where the tab bar should be hidden
-  const hiddenSegments = ["(flashcard)","updateProfile"];
+  const hiddenSegments = ["(flashcard)","(notes)","(todoList)","updateProfile"];
   const shouldHideTabBar = segments.some((segment) => hiddenSegments.includes(segment));
 
   return (

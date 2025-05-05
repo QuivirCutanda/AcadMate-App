@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import { setupDatabase } from "@/src/database/database";
 import { FlashcardTable } from "@/src/database/FlashcardsTable";
 import {insertPeriodicTableDeck} from "@/constant/GenerateFlashCard";
+import {NotesTable} from "@/src/database/notes/NotesTable";
 
 const slides = [
   {
@@ -39,6 +40,7 @@ export default function OnBoarding() {
     const initializeDatabase = async () => {
       await setupDatabase();
       await FlashcardTable();
+      await NotesTable();
       await insertPeriodicTableDeck();
     };
     initializeDatabase();

@@ -86,16 +86,16 @@ const study = () => {
   const handleRoute = (id: number) => {
     switch (id) {
       case 0:
-        router.navigate("/(tabs)/(study)/(flashcard)");
+        router.navigate("/(tabs)/(study)/(todoList)");
         break;
       case 1:
         router.navigate("/(tabs)/(study)/(flashcard)");
         break;
       case 2:
-        router.navigate("/(tabs)/(study)/(flashcard)");
+        router.navigate("/(tabs)/(study)/(notes)");
         break;
       case 3:
-        router.navigate("/(tabs)/(study)/(flashcard)");
+        router.navigate("/(tabs)/(study)/(notes)");
         break;
     }
   };

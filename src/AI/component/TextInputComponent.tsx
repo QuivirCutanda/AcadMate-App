@@ -37,7 +37,7 @@ const TextInputComponent: React.FC<TextInputComponentProps> = ({
         }}
         disabled={loading || input.trim().length === 0}
       >
-        
+        <AntDesign name="arrowup" size={24} color="#FFFFFF" /> 
       </TouchableOpacity>
     </View>
   );
