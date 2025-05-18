@@ -11,6 +11,7 @@ import { FlashcardTable } from "@/src/database/FlashcardsTable";
 import {insertPeriodicTableDeck} from "@/constant/GenerateFlashCard";
 import {NotesTable} from "@/src/database/notes/NotesTable";
 import { TodoListTables } from "@/src/database/todo-list/todoList-table";
+import {FinanceTables} from "@/src/database/finance/finance_table";
 const slides = [
   {
     id: "1",
@@ -42,6 +43,7 @@ export default function OnBoarding() {
       await FlashcardTable();
       await NotesTable();
       await TodoListTables();
+      await FinanceTables();
       await insertPeriodicTableDeck();
     };
     initializeDatabase();
