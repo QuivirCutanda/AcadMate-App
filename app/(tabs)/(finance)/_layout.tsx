@@ -8,8 +8,7 @@ export default function TabLayout() {
   return (
     <ScrollProvider>
       <Tabs
-        screenOptions={{ headerShown: false }}
-        tabBar={(props) => <TabBar {...props} />}
+        screenOptions={{ headerShown: false, tabBarStyle: { display: "none" } }}
       >
         <Tabs.Screen name="finance" options={{ title: "Finance" }} />
       </Tabs>

@@ -6,7 +6,7 @@ import {
   TextInput,
   Modal,
   Alert,
-  FlatList,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import {
@@ -366,25 +366,23 @@ const TodoListScreen = () => {
   return (
     <View className="flex-1 bg-gray-50">
       {/* Header */}
-      <View className="bg-indigo-600 p-6 pb-4">
-        <View className="flex-row justify-between items-center mb-6">
+      <View className="bg-secondary p-6 pb-4">
+        <View className="flex-col justify-between items-center mb-6">
           <Text className="text-2xl font-bold text-white">My Tasks</Text>
-          <Pressable
-            onPress={() => {
-              setCurrentTask({
-                user_id: userId,
-                title: "",
-                priority: 0,
-                is_completed: false,
-                is_important: false,
-                tags: [],
-              });
-              setShowTaskModal(true);
-            }}
-            className="bg-white p-2 rounded-full"
-          >
-            <Plus width={24} height={24} color="#6366f1" />
-          </Pressable>
+          <View className="flex-row items-center mt-4">
+            <TextInput
+              value={newTaskTitle}
+              onChangeText={setNewTaskTitle}
+              placeholder="Enter new task"
+              className="border border-gray-200 rounded-lg p-3 bg-white text-gray-800 flex-1 mr-2"
+            />
+            <TouchableOpacity
+              onPress={handleAddTask}
+              className="bg-green-500 px-4 py-3 rounded-lg"
+            >
+              <Text className="text-white font-medium">Add</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Filter tabs */}
@@ -399,7 +397,7 @@ const TodoListScreen = () => {
           >
             <Text
               className={`font-medium ${
-                activeFilter === "all" ? "text-indigo-600" : "text-white"
+                activeFilter === "all" ? "text-secondary" : "text-white"
               }`}
             >
               All
@@ -415,7 +413,7 @@ const TodoListScreen = () => {
           >
             <Text
               className={`font-medium ${
-                activeFilter === "today" ? "text-indigo-600" : "text-white"
+                activeFilter === "today" ? "text-secondary" : "text-white"
               }`}
             >
               Today
@@ -431,15 +429,13 @@ const TodoListScreen = () => {
           >
             <Text
               className={`font-medium ${
-                activeFilter === "important" ? "text-indigo-600" : "text-white"
+                activeFilter === "important" ? "text-secondary" : "text-white"
               }`}
             >
               Important
             </Text>
           </Pressable>
         </View>
-
-     
       </View>
 
       {/* Task list */}
@@ -592,12 +588,12 @@ const TodoListScreen = () => {
                       onChangeText={setNewSubtaskTitle}
                       onSubmitEditing={handleAddSubtask}
                     />
-                    <Pressable
-                      className="bg-indigo-500 p-2 rounded-lg"
+                    <TouchableOpacity
+                      className="bg-secondary p-2 rounded-lg"
                       onPress={handleAddSubtask}
                     >
                       <Plus width={16} height={16} color="white" />
-                    </Pressable>
+                    </TouchableOpacity>
                   </View>
 
                   {/* Task actions */}
@@ -637,11 +633,11 @@ const TodoListScreen = () => {
       <Modal
         visible={showTaskModal}
         animationType="slide"
-        transparent={false}
+        transparent={true}
         onRequestClose={() => setShowTaskModal(false)}
       >
         <View className="flex-1 bg-gray-50">
-          <View className="bg-indigo-600 p-6 pb-4">
+          <View className="bg-secondary p-6 pb-4">
             <View className="flex-row justify-between items-center mb-4">
               <Text className="text-2xl font-bold text-white">
                 Task Details
@@ -715,7 +711,6 @@ const TodoListScreen = () => {
                     />
                   )}
                 </View>
-
                 <View className="mb-6">
                   <Text className="text-gray-500 mb-2 font-medium">
                     Priority
@@ -729,7 +724,7 @@ const TodoListScreen = () => {
                     ].map(({ level, label, color }) => (
                       <Pressable
                         key={level}
-                        className={`flex-1 p-3 rounded-lg items-center ${
+                        className={`flex-1 p-3 rounded-lg items-center mx-1 ${
                           currentTask.priority === level ? color : "bg-gray-100"
                         }`}
                         onPress={() =>
@@ -737,11 +732,11 @@ const TodoListScreen = () => {
                         }
                       >
                         <Text
-                          className={
+                          className={`text-sm ${
                             currentTask.priority === level
                               ? "font-medium"
                               : "text-gray-500"
-                          }
+                          }`}
                         >
                           {label}
                         </Text>
@@ -749,104 +744,9 @@ const TodoListScreen = () => {
                     ))}
                   </View>
                 </View>
-
-                <View className="mb-6">
-                  <Text className="text-gray-500 mb-2 font-medium">
-                    Project
-                  </Text>
-                  <View className="relative">
-                    <Pressable
-                      className="border border-gray-200 rounded-lg p-3 bg-white flex-row justify-between items-center"
-                      onPress={() =>
-                        setShowProjectDropdown(!showProjectDropdown)
-                      }
-                    >
-                      <Text className="text-gray-800">
-                        {currentTask.project_id
-                          ? projects.find(
-                              (p) => p.id === currentTask.project_id
-                            )?.name
-                          : "No project"}
-                      </Text>
-                      <ChevronDown width={20} height={20} color="#6b7280" />
-                    </Pressable>
-
-                    {showProjectDropdown && (
-                      <View className="absolute top-14 left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                        <Pressable
-                          className="p-3 border-b border-gray-100"
-                          onPress={() => selectProject(null)}
-                        >
-                          <Text className="text-gray-800">No project</Text>
-                        </Pressable>
-                        {projects.map((project) => (
-                          <Pressable
-                            key={project.id}
-                            className="p-3 border-b border-gray-100 flex-row items-center"
-                            onPress={() => selectProject(project.id!)}
-                          >
-                            <View
-                              className="w-3 h-3 rounded-full mr-2"
-                              style={{ backgroundColor: project.color }}
-                            />
-                            <Text className="text-gray-800">
-                              {project.name}
-                            </Text>
-                          </Pressable>
-                        ))}
-                      </View>
-                    )}
-                  </View>
-                </View>
-
-                <View className="mb-6">
-                  <Text className="text-gray-500 mb-2 font-medium">Tags</Text>
-                  <View className="relative">
-                    <Pressable
-                      className="border border-gray-200 rounded-lg p-3 bg-white flex-row justify-between items-center"
-                      onPress={() => setShowTagsDropdown(!showTagsDropdown)}
-                    >
-                      <Text className="text-gray-800">
-                        {currentTask.tags?.length
-                          ? `${currentTask.tags.length} tags selected`
-                          : "No tags"}
-                      </Text>
-                      <ChevronDown width={20} height={20} color="#6b7280" />
-                    </Pressable>
-
-                    {showTagsDropdown && (
-                      <View className="absolute top-14 left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-3">
-                        <View className="flex-row flex-wrap">
-                          {tags.map((tag) => (
-                            <Pressable
-                              key={tag.id}
-                              className={`p-2 mr-2 mb-2 rounded-full ${
-                                currentTask.tags?.includes(tag.id!)
-                                  ? "bg-indigo-100"
-                                  : "bg-gray-100"
-                              }`}
-                              onPress={() => toggleTag(tag.id!)}
-                            >
-                              <View className="flex-row items-center">
-                                <View
-                                  className="w-3 h-3 rounded-full mr-1"
-                                  style={{ backgroundColor: tag.color }}
-                                />
-                                <Text className="text-gray-800 text-sm">
-                                  {tag.name}
-                                </Text>
-                              </View>
-                            </Pressable>
-                          ))}
-                        </View>
-                      </View>
-                    )}
-                  </View>
-                </View>
-
-                <View className="flex-row space-x-3">
+                <View className="flex-col mt-4">
                   <Pressable
-                    className="flex-1 bg-indigo-500 p-4 rounded-lg items-center"
+                    className="flex-1 bg-secondary p-4 rounded-lg items-center mb-2"
                     onPress={handleSaveTask}
                   >
                     <Text className="text-white font-medium">Save Changes</Text>
