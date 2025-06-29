@@ -48,3 +48,13 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+
+===========================================================================================================
+“AcadMate - Your Academic and Finance Buddy: A Platform for Managing Student Academics and Finances”
+
+AcadMate is a comprehensive student-focused mobile application designed to streamline academic and financial management. It serves as a personal companion, helping students track expenses, manage daily tasks, study efficiently, and maintain a balanced lifestyle through features like reading, exercising, and meditation.
+
+The main goal of AcadMate is to provide students with an all-in-one offline mobile application that helps them manage their academic tasks and finances efficiently. AcadMate aims to enhance productivity, financial awareness, and organization by integrating essential study tools and finance tracking features in a single, lightweight, and accessible platform.
+
+
