@@ -37,12 +37,12 @@ const StudyList = [
     title: "Notes",
     description: "Jot down and save ideas.",
   },
-  {
-    icon: Ionicons,
-    iconName: "alarm",
-    title: "Alarm Clock",
-    description: "Never miss study time!",
-  },
+  // {
+  //   icon: Ionicons,
+  //   iconName: "alarm",
+  //   title: "Alarm Clock",
+  //   description: "Never miss study time!",
+  // },
 ];
 const study = () => {
   const { scrollHandler } = useScroll();
@@ -94,9 +94,9 @@ const study = () => {
       case 2:
         router.navigate("/(tabs)/(study)/(notes)");
         break;
-      case 3:
-        router.navigate("/(tabs)/(study)/(notes)");
-        break;
+      // case 3:
+      //   router.navigate("/(tabs)/(study)/(notes)");
+      //   break;
     }
   };
 

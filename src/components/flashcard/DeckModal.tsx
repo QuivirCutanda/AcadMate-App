@@ -17,9 +17,9 @@ interface CustomModalProps {
 
 const FlashcardOptions = [
   { key: "manualEntry", label: "Create from Scratch", icon: "pencil-alt" },
-  { key: "importPDF", label: "Import from PDF", icon: "file-pdf" },
+  // { key: "importPDF", label: "Import from PDF", icon: "file-pdf" },
   { key: "importDocs", label: "Import from Docs", icon: "file-word" },
-  { key: "scanImage", label: "Scan from Image", icon: "camera" },
+  // { key: "scanImage", label: "Scan from Image", icon: "camera" },
 ];
 
 const StudyModal: React.FC<CustomModalProps> = ({

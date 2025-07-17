@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -18,46 +18,6 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ text, type }) => {
 
   const parts = text ? text.split(codeBlockRegex) : [];
 
-  const [displayedParts, setDisplayedParts] = useState<string[]>(() =>
-    type === "user" ? parts : Array(parts.length).fill("")
-  );
-
-  useEffect(() => {
-    if (type === "ai") {
-      let index = 0;
-      const newParts = [...displayedParts];
-
-      const typeText = async (partIndex: number) => {
-        const fullText = parts[partIndex];
-        let i = 0;
-        const speed = 3;
-
-        return new Promise<void>((resolve) => {
-          const interval = setInterval(() => {
-            newParts[partIndex] = fullText.slice(0, i);
-            setDisplayedParts([...newParts]);
-            i += speed;
-
-            if (i > fullText.length) {
-              newParts[partIndex] = fullText;
-              setDisplayedParts([...newParts]);
-              clearInterval(interval);
-              resolve();
-            }
-          }, 30);
-        });
-      };
-
-      const startTyping = async () => {
-        for (let i = 0; i < parts.length; i++) {
-          await typeText(i);
-        }
-      };
-
-      startTyping();
-    }
-  }, [text, type]);
-
   const copyToClipboard = async (content: string) => {
     await Clipboard.setStringAsync(content.trim());
     ToastAndroid.show("Copied to clipboard!", ToastAndroid.SHORT);
@@ -67,48 +27,77 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ text, type }) => {
     return text.replace(/^\d+\.\s*/, "");
   };
 
-  const formatBoldText = (text: string) => {
-    const parts = text.split(/\*\*(.*?)\*\*/g);
-    return parts.map((part, index) => {
+  const formatText = (text: string) => {
+    // Handle headers (# ## ### #### ##### ######)
+    let formattedText = text.replace(/^(#{1,6})\s+(.*?)$/gm, (match, hashes, content) => {
+      return `**${content.trim()}**\n`;
+    });
+
+    // Handle bold text (**text**)
+    const parts = formattedText.split(/\*\*(.*?)\*\*/g);
+    const elements: React.ReactNode[] = [];
+    
+    parts.forEach((part, index) => {
       if (index % 2 === 1) {
-        return (
-          <Text
-            key={index}
-            style={{ fontWeight: "bold" }}
-            className="text-base"
-          >
+        // Bold text
+        elements.push(
+          <Text key={index} style={{ fontWeight: "bold" }}>
             {part}
           </Text>
         );
       } else {
-        return part;
+        // Regular text - handle line breaks and lists
+        const lines = part.split('\n');
+        lines.forEach((line, lineIndex) => {
+          // Handle bullet points (- or *)
+          if (line.trim().match(/^[-*]\s+/)) {
+            elements.push(
+              <Text key={`${index}-${lineIndex}`}>
+                {lineIndex > 0 && '\n'}• {line.trim().replace(/^[-*]\s+/, '')}
+              </Text>
+            );
+          }
+          // Handle numbered lists (1. 2. etc.)
+          else if (line.trim().match(/^\d+\.\s+/)) {
+            const number = line.trim().match(/^(\d+)\.\s+/)?.[1];
+            elements.push(
+              <Text key={`${index}-${lineIndex}`}>
+                {lineIndex > 0 && '\n'}{number}. {line.trim().replace(/^\d+\.\s+/, '')}
+              </Text>
+            );
+          }
+          // Regular line
+          else if (line.trim()) {
+            elements.push(
+              <Text key={`${index}-${lineIndex}`}>
+                {lineIndex > 0 && '\n'}{line}
+              </Text>
+            );
+          }
+          // Empty line (preserve spacing)
+          else if (lineIndex > 0) {
+            elements.push(
+              <Text key={`${index}-${lineIndex}`}>{'\n'}</Text>
+            );
+          }
+        });
       }
     });
-  };
 
-  const handleTextFormatting = (text: string) => {
-    const modifiedText = text.replace(/###\s*(.*?)(\n|$)/g, (_, match) => {
-      return `**${match.trim()}**`;
-    });
-
-    return formatBoldText(modifiedText);
+    return elements;
   };
 
   return (
     <View
-      className={`p-2 m-2 rounded-lg ${
+      className={`p-4 m-2 rounded-lg ${
         type === "user"
           ? "max-w-[80%] bg-secondary self-end m-4"
-          : displayedParts.some((part) => part.length > 0)
-          ? "w-full self-start pr-8"
-          : ""
+          : "w-full self-start pr-8 mb-4"
       }`}
     >
-      {displayedParts.map((part, index) =>
+      {parts.map((part, index) =>
         index % 2 === 1 ? (
-          part.length > 0 ? (
-            <CodeSyntaxFormatter key={index} code={part} />
-          ) : null
+          <CodeSyntaxFormatter key={index} code={part} />
         ) : (
           <TouchableWithoutFeedback
             key={index}
@@ -117,9 +106,10 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ text, type }) => {
             <View>
               <Text
                 className={`${type === "user"
-          ? "text-primary": "text-black"}`}
+          ? "text-primary": "text-black"} leading-6`}
+                style={{ lineHeight: 24 }}
               >
-                {handleTextFormatting(removeNumbering(part))}
+                {formatText(removeNumbering(part))}
               </Text>
             </View>
           </TouchableWithoutFeedback>

@@ -46,7 +46,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
   const [showDurationModal, setShowDurationModal] = useState(false);
   const [resetKey, setResetKey] = useState(0);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  
+
   // Store reference to the timer
   const timerRef = useRef<any>(null);
 
@@ -194,9 +194,10 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
           }}
         />
       </Modal>
+
       <Modal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        onClose={() => {}}
         Width="96"
       >
         <Result

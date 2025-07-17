@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -44,6 +44,7 @@ export default function ChatScreen() {
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState<MessagesState>({});
   const [history, setHistory] = useState<ChatData[]>([]);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     setVisible(!(isConnected && isInternetReachable));
@@ -75,6 +76,15 @@ export default function ChatScreen() {
     };
     fetchHistory();
   }, []);
+
+  // Auto-scroll to bottom when history changes or drawer opens
+  useEffect(() => {
+    if (history.length > 0 && scrollViewRef.current && open) {
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 300);
+    }
+  }, [history, open]);
 
   const handleClearChat = async () => {
     await insertMessage(1, messages);
@@ -117,7 +127,13 @@ export default function ChatScreen() {
   return (
     <Drawer
       open={open}
-      onOpen={() => setOpen(true)}
+      onOpen={() => {
+        setOpen(true);
+        // Scroll to bottom when drawer opens
+        setTimeout(() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 500);
+      }}
       onClose={() => setOpen(false)}
       renderDrawerContent={() => (
         <View className="flex-1 bg-[#E0E0E0]">
@@ -138,7 +154,24 @@ export default function ChatScreen() {
               </Text>
             </View>
           ) : (
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              ref={scrollViewRef}
+              showsVerticalScrollIndicator={false}
+              onContentSizeChange={() => {
+                if (open) {
+                  setTimeout(() => {
+                    scrollViewRef.current?.scrollToEnd({ animated: true });
+                  }, 100);
+                }
+              }}
+              onLayout={() => {
+                if (open && history.length > 0) {
+                  setTimeout(() => {
+                    scrollViewRef.current?.scrollToEnd({ animated: true });
+                  }, 100);
+                }
+              }}
+            >
               {history.map((item, index) => {
                 const firstAIMessage = getFirstAIResponse(item.conversation);
                 return firstAIMessage ? (

@@ -156,10 +156,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
     <View className="bg-background-light flex-1">
       <Modal
         visible={modalVisible}
-        onClose={() => {
-          router.back();
-          setModalVisible(false);
-        }}
+        onClose={() => {}}
         Width="96"
       >
         <Result

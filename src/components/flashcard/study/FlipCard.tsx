@@ -1,5 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
-import { View, Text, TouchableOpacity, Alert, TouchableWithoutFeedback } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { MotiView } from "moti";
 import {
   Entypo,
@@ -147,7 +153,11 @@ export default function FlashcardReview({
         <View>
           <BasicReviewModal
             visible={complete}
-            onClose={() => setComplete(false)}
+            onClose={() => {
+              setComplete(false);
+              handleRepeat();
+              router.back();
+            }}
             onPressBtnLeft={handleRepeat}
             onPressBtnRight={() => {
               setComplete(false);
